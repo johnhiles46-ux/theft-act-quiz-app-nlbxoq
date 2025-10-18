@@ -1,15 +1,12 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
   Platform,
-  Keyboard,
-  Alert,
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { IconSymbol } from '@/components/IconSymbol';
@@ -24,7 +21,6 @@ export default function QuizScreen() {
   const [checkedAnswers, setCheckedAnswers] = useState<boolean[]>([]);
   const [showFeedback, setShowFeedback] = useState(false);
   const [score, setScore] = useState({ correct: 0, total: 0 });
-  const inputRefs = useRef<(TextInput | null)[]>([]);
 
   useEffect(() => {
     loadNewQuestion();
@@ -36,20 +32,34 @@ export default function QuizScreen() {
     setUserAnswers(new Array(newQuestion.blanks.length).fill(''));
     setCheckedAnswers(new Array(newQuestion.blanks.length).fill(false));
     setShowFeedback(false);
-    inputRefs.current = [];
     console.log('New question loaded:', newQuestion.section);
   };
 
-  const handleAnswerChange = (text: string, index: number) => {
+  const handleOptionSelect = (blankIndex: number, selectedOption: string) => {
+    if (showFeedback) return; // Don't allow changes after checking
+
+    if (Platform.OS !== 'web') {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+
     const newAnswers = [...userAnswers];
-    newAnswers[index] = text;
+    newAnswers[blankIndex] = selectedOption;
     setUserAnswers(newAnswers);
+    console.log(`Blank ${blankIndex} selected: ${selectedOption}`);
   };
 
   const handleCheckAnswers = () => {
     if (!question) return;
 
-    Keyboard.dismiss();
+    // Check if all blanks have been answered
+    const allAnswered = userAnswers.every(answer => answer !== '');
+    if (!allAnswered) {
+      if (Platform.OS !== 'web') {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      }
+      console.log('Please answer all questions before checking');
+      return;
+    }
 
     const results = userAnswers.map((answer, index) => {
       return checkAnswer(answer, question.blanks[index].word);
@@ -71,7 +81,7 @@ export default function QuizScreen() {
       console.log('All answers correct!');
     } else {
       if (Platform.OS !== 'web') {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       }
       console.log(`${correctCount} out of ${question.blanks.length} correct`);
     }
@@ -100,44 +110,31 @@ export default function QuizScreen() {
         );
       }
 
-      // Add input field if not the last part
+      // Add blank indicator if not the last part
       if (index < question.blanks.length) {
         const isCorrect = checkedAnswers[index];
         const hasBeenChecked = showFeedback;
+        const userAnswer = userAnswers[index];
 
         elements.push(
-          <View key={`input-${index}`} style={styles.inputWrapper}>
-            <TextInput
-              ref={(ref) => (inputRefs.current[index] = ref)}
+          <View key={`blank-${index}`} style={styles.blankIndicator}>
+            <Text
               style={[
-                styles.blankInput,
-                hasBeenChecked && isCorrect && commonStyles.inputCorrect,
-                hasBeenChecked && !isCorrect && commonStyles.inputIncorrect,
+                styles.blankText,
+                userAnswer && styles.blankTextFilled,
+                hasBeenChecked && isCorrect && styles.blankTextCorrect,
+                hasBeenChecked && !isCorrect && styles.blankTextIncorrect,
               ]}
-              value={userAnswers[index]}
-              onChangeText={(text) => handleAnswerChange(text, index)}
-              placeholder="..."
-              placeholderTextColor={colors.textSecondary}
-              autoCapitalize="none"
-              autoCorrect={false}
-              editable={!showFeedback}
-              onSubmitEditing={() => {
-                if (index < question.blanks.length - 1) {
-                  inputRefs.current[index + 1]?.focus();
-                } else {
-                  Keyboard.dismiss();
-                }
-              }}
-              returnKeyType={index < question.blanks.length - 1 ? 'next' : 'done'}
-            />
+            >
+              {userAnswer || `[${index + 1}]`}
+            </Text>
             {hasBeenChecked && (
-              <View style={styles.feedbackIcon}>
-                <IconSymbol
-                  name={isCorrect ? 'checkmark.circle.fill' : 'xmark.circle.fill'}
-                  size={20}
-                  color={isCorrect ? colors.success : colors.error}
-                />
-              </View>
+              <IconSymbol
+                name={isCorrect ? 'checkmark.circle.fill' : 'xmark.circle.fill'}
+                size={16}
+                color={isCorrect ? colors.success : colors.error}
+                style={styles.blankIcon}
+              />
             )}
           </View>
         );
@@ -147,28 +144,69 @@ export default function QuizScreen() {
     return <View style={styles.questionContainer}>{elements}</View>;
   };
 
-  const renderCorrectAnswers = () => {
-    if (!showFeedback || !question) return null;
+  const renderMultipleChoiceOptions = () => {
+    if (!question) return null;
 
-    const hasErrors = checkedAnswers.some(result => !result);
-    if (!hasErrors) return null;
+    return question.blanks.map((blank, blankIndex) => {
+      const isCorrect = checkedAnswers[blankIndex];
+      const hasBeenChecked = showFeedback;
+      const userAnswer = userAnswers[blankIndex];
 
-    return (
-      <View style={styles.correctAnswersCard}>
-        <Text style={styles.correctAnswersTitle}>Correct Answers:</Text>
-        {question.blanks.map((blank, index) => {
-          if (checkedAnswers[index]) return null;
-          return (
-            <View key={index} style={styles.correctAnswerItem}>
-              <Text style={styles.correctAnswerText}>
-                <Text style={styles.correctAnswerLabel}>Blank {index + 1}:</Text>{' '}
-                {blank.word}
-              </Text>
-            </View>
-          );
-        })}
-      </View>
-    );
+      return (
+        <View key={`options-${blankIndex}`} style={styles.optionsContainer}>
+          <Text style={styles.optionsLabel}>Blank {blankIndex + 1}:</Text>
+          <View style={styles.optionsGrid}>
+            {blank.options.map((option, optionIndex) => {
+              const isSelected = userAnswer === option;
+              const isCorrectOption = option.toLowerCase() === blank.word.toLowerCase();
+              
+              let buttonStyle = [styles.optionButton];
+              let textStyle = [styles.optionText];
+
+              if (isSelected && !hasBeenChecked) {
+                buttonStyle.push(styles.optionButtonSelected);
+                textStyle.push(styles.optionTextSelected);
+              }
+
+              if (hasBeenChecked) {
+                if (isSelected && isCorrect) {
+                  buttonStyle.push(styles.optionButtonCorrect);
+                  textStyle.push(styles.optionTextCorrect);
+                } else if (isSelected && !isCorrect) {
+                  buttonStyle.push(styles.optionButtonIncorrect);
+                  textStyle.push(styles.optionTextIncorrect);
+                } else if (isCorrectOption) {
+                  buttonStyle.push(styles.optionButtonShowCorrect);
+                  textStyle.push(styles.optionTextShowCorrect);
+                } else {
+                  buttonStyle.push(styles.optionButtonDisabled);
+                  textStyle.push(styles.optionTextDisabled);
+                }
+              }
+
+              return (
+                <TouchableOpacity
+                  key={`option-${blankIndex}-${optionIndex}`}
+                  style={buttonStyle}
+                  onPress={() => handleOptionSelect(blankIndex, option)}
+                  disabled={hasBeenChecked}
+                >
+                  <Text style={textStyle}>{option}</Text>
+                  {hasBeenChecked && isCorrectOption && (
+                    <IconSymbol
+                      name="checkmark.circle.fill"
+                      size={18}
+                      color={colors.success}
+                      style={styles.optionIcon}
+                    />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+      );
+    });
   };
 
   if (!question) {
@@ -198,7 +236,6 @@ export default function QuizScreen() {
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
         >
           {/* Score Display */}
           <View style={styles.scoreCard}>
@@ -216,13 +253,15 @@ export default function QuizScreen() {
           {/* Question Card */}
           <View style={[commonStyles.card, styles.questionCard]}>
             <Text style={styles.instructionText}>
-              Fill in the blanks with the correct legal terms:
+              Read the text and select the correct words for each blank:
             </Text>
             {renderTextWithBlanks()}
           </View>
 
-          {/* Correct Answers Display */}
-          {renderCorrectAnswers()}
+          {/* Multiple Choice Options */}
+          <View style={styles.multipleChoiceSection}>
+            {renderMultipleChoiceOptions()}
+          </View>
 
           {/* Action Buttons */}
           <View style={styles.buttonContainer}>
@@ -272,7 +311,7 @@ export default function QuizScreen() {
                   />
                   <Text style={styles.feedbackPartialText}>
                     {checkedAnswers.filter(r => r).length} out of{' '}
-                    {question.blanks.length} correct. Review the answers above.
+                    {question.blanks.length} correct. The correct answers are highlighted in green.
                   </Text>
                 </View>
               )}
@@ -345,50 +384,110 @@ const styles = StyleSheet.create({
     lineHeight: 28,
     color: colors.text,
   },
-  inputWrapper: {
-    position: 'relative',
+  blankIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginHorizontal: 4,
     marginVertical: 2,
   },
-  blankInput: {
-    minWidth: 120,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    paddingRight: 36,
+  blankText: {
     fontSize: 16,
-    borderWidth: 1,
-    borderColor: colors.textSecondary,
-    borderRadius: 6,
-    backgroundColor: colors.card,
-    color: colors.text,
-  },
-  feedbackIcon: {
-    position: 'absolute',
-    right: 8,
-    top: '50%',
-    transform: [{ translateY: -10 }],
-  },
-  correctAnswersCard: {
+    fontWeight: '600',
+    color: colors.textSecondary,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
     backgroundColor: colors.highlight,
-    borderRadius: 8,
-    padding: 16,
+  },
+  blankTextFilled: {
+    color: colors.primary,
+    backgroundColor: colors.highlight,
+  },
+  blankTextCorrect: {
+    color: colors.success,
+    backgroundColor: '#E8F5E9',
+  },
+  blankTextIncorrect: {
+    color: colors.error,
+    backgroundColor: '#FFEBEE',
+  },
+  blankIcon: {
+    marginLeft: 4,
+  },
+  multipleChoiceSection: {
     marginBottom: 16,
   },
-  correctAnswersTitle: {
+  optionsContainer: {
+    marginBottom: 20,
+  },
+  optionsLabel: {
     fontSize: 16,
     fontWeight: '600',
     color: colors.text,
-    marginBottom: 12,
-  },
-  correctAnswerItem: {
     marginBottom: 8,
   },
-  correctAnswerText: {
-    fontSize: 14,
-    color: colors.text,
+  optionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
   },
-  correctAnswerLabel: {
+  optionButton: {
+    backgroundColor: colors.card,
+    borderWidth: 2,
+    borderColor: colors.textSecondary,
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    minWidth: '47%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  optionButtonSelected: {
+    borderColor: colors.primary,
+    backgroundColor: colors.highlight,
+  },
+  optionButtonCorrect: {
+    borderColor: colors.success,
+    backgroundColor: '#E8F5E9',
+  },
+  optionButtonIncorrect: {
+    borderColor: colors.error,
+    backgroundColor: '#FFEBEE',
+  },
+  optionButtonShowCorrect: {
+    borderColor: colors.success,
+    backgroundColor: '#E8F5E9',
+  },
+  optionButtonDisabled: {
+    opacity: 0.5,
+  },
+  optionText: {
+    fontSize: 15,
+    color: colors.text,
+    textAlign: 'center',
+  },
+  optionTextSelected: {
     fontWeight: '600',
+    color: colors.primary,
+  },
+  optionTextCorrect: {
+    fontWeight: '600',
+    color: colors.success,
+  },
+  optionTextIncorrect: {
+    fontWeight: '600',
+    color: colors.error,
+  },
+  optionTextShowCorrect: {
+    fontWeight: '600',
+    color: colors.success,
+  },
+  optionTextDisabled: {
+    color: colors.textSecondary,
+  },
+  optionIcon: {
+    marginLeft: 6,
   },
   buttonContainer: {
     marginBottom: 16,

@@ -10,6 +10,7 @@ export interface QuizQuestion {
 export interface BlankItem {
   word: string;
   position: number;
+  options: string[]; // Array of 4 options (1 correct + 3 incorrect)
 }
 
 // Theft Act 1968 content with key terms
@@ -86,7 +87,54 @@ export const theftActSections = [
   },
 ];
 
-// Function to generate a random question with blanks
+// Pool of incorrect options for generating distractors
+const incorrectOptionsPool = [
+  'honestly', 'borrows', 'goods', 'temporarily using', 'recklessly', 'negligently',
+  'possession', 'ownership', 'custody', 'bailment', 'license', 'easement',
+  'intention', 'knowledge', 'belief', 'suspicion', 'awareness', 'understanding',
+  'permanently', 'temporarily', 'briefly', 'momentarily', 'indefinitely',
+  'depriving', 'borrowing', 'using', 'holding', 'keeping', 'retaining',
+  'force', 'violence', 'threat', 'coercion', 'intimidation', 'pressure',
+  'building', 'structure', 'dwelling', 'premises', 'residence', 'property',
+  'trespasser', 'intruder', 'visitor', 'guest', 'occupant', 'tenant',
+  'steal', 'take', 'remove', 'acquire', 'obtain', 'procure',
+  'dishonestly', 'fraudulently', 'deceitfully', 'falsely', 'wrongfully',
+  'appropriates', 'takes', 'seizes', 'acquires', 'obtains', 'procures',
+  'deception', 'fraud', 'misrepresentation', 'falsehood', 'lie', 'trick',
+  'retention', 'keeping', 'holding', 'storing', 'maintaining', 'preserving',
+  'disposal', 'sale', 'transfer', 'distribution', 'allocation', 'assignment',
+  'realisation', 'conversion', 'liquidation', 'monetization', 'exchange',
+];
+
+// Function to generate incorrect options for a given correct answer
+function generateIncorrectOptions(correctAnswer: string, allKeywords: string[]): string[] {
+  const incorrectOptions: string[] = [];
+  
+  // First, try to use other keywords from the same section as distractors
+  const otherKeywords = allKeywords.filter(
+    keyword => keyword.toLowerCase() !== correctAnswer.toLowerCase()
+  );
+  
+  // Shuffle and take up to 3 from other keywords
+  const shuffledKeywords = [...otherKeywords].sort(() => Math.random() - 0.5);
+  incorrectOptions.push(...shuffledKeywords.slice(0, 3));
+  
+  // If we need more options, use the general pool
+  if (incorrectOptions.length < 3) {
+    const shuffledPool = [...incorrectOptionsPool]
+      .filter(option => 
+        option.toLowerCase() !== correctAnswer.toLowerCase() &&
+        !incorrectOptions.some(opt => opt.toLowerCase() === option.toLowerCase())
+      )
+      .sort(() => Math.random() - 0.5);
+    
+    incorrectOptions.push(...shuffledPool.slice(0, 3 - incorrectOptions.length));
+  }
+  
+  return incorrectOptions.slice(0, 3);
+}
+
+// Function to generate a random question with blanks and multiple choice options
 export function generateQuestion(): QuizQuestion {
   // Select a random section
   const section = theftActSections[Math.floor(Math.random() * theftActSections.length)];
@@ -101,7 +149,7 @@ export function generateQuestion(): QuizQuestion {
   const shuffledKeywords = [...section.keywords].sort(() => Math.random() - 0.5);
   const selectedKeywords = shuffledKeywords.slice(0, numBlanks);
   
-  // Create blanks array with positions
+  // Create blanks array with positions and options
   const blanks: BlankItem[] = [];
   let textWithBlanks = section.fullText;
   
@@ -112,9 +160,17 @@ export function generateQuestion(): QuizQuestion {
     
     if (match && match.index !== undefined) {
       const position = match.index;
+      
+      // Generate 3 incorrect options
+      const incorrectOptions = generateIncorrectOptions(keyword, section.keywords);
+      
+      // Combine correct answer with incorrect options and shuffle
+      const allOptions = [keyword, ...incorrectOptions].sort(() => Math.random() - 0.5);
+      
       blanks.push({
         word: keyword,
         position: position,
+        options: allOptions,
       });
       
       // Replace the keyword with a blank placeholder
