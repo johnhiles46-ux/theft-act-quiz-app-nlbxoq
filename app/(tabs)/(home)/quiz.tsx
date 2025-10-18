@@ -21,6 +21,7 @@ export default function QuizScreen() {
   const [checkedAnswers, setCheckedAnswers] = useState<boolean[]>([]);
   const [showFeedback, setShowFeedback] = useState(false);
   const [score, setScore] = useState({ correct: 0, total: 0 });
+  const [noQuestionsAvailable, setNoQuestionsAvailable] = useState(false);
 
   useEffect(() => {
     loadNewQuestion();
@@ -28,10 +29,16 @@ export default function QuizScreen() {
 
   const loadNewQuestion = () => {
     const newQuestion = generateQuestion();
+    if (!newQuestion) {
+      setNoQuestionsAvailable(true);
+      console.log('No questions available');
+      return;
+    }
     setQuestion(newQuestion);
     setUserAnswers(new Array(newQuestion.blanks.length).fill(''));
     setCheckedAnswers(new Array(newQuestion.blanks.length).fill(false));
     setShowFeedback(false);
+    setNoQuestionsAvailable(false);
     console.log('New question loaded:', newQuestion.section);
   };
 
@@ -209,6 +216,40 @@ export default function QuizScreen() {
     });
   };
 
+  if (noQuestionsAvailable) {
+    return (
+      <>
+        <Stack.Screen
+          options={{
+            title: 'Quiz',
+            headerLeft: () => (
+              <TouchableOpacity
+                onPress={() => router.back()}
+                style={styles.headerButton}
+              >
+                <IconSymbol name="chevron.left" size={24} color={colors.primary} />
+              </TouchableOpacity>
+            ),
+          }}
+        />
+        <View style={[commonStyles.container, styles.emptyContainer]}>
+          <IconSymbol name="exclamationmark.triangle.fill" size={64} color={colors.textSecondary} />
+          <Text style={styles.emptyTitle}>No Questions Available</Text>
+          <Text style={styles.emptyText}>
+            All questions have been cleared. Please add new content to start the quiz.
+          </Text>
+          <TouchableOpacity
+            style={[buttonStyles.primaryButton, styles.backButton]}
+            onPress={() => router.back()}
+          >
+            <IconSymbol name="chevron.left" size={20} color="#FFFFFF" style={styles.buttonIcon} />
+            <Text style={buttonStyles.buttonText}>Go Back</Text>
+          </TouchableOpacity>
+        </View>
+      </>
+    );
+  }
+
   if (!question) {
     return (
       <View style={[commonStyles.container, styles.loadingContainer]}>
@@ -327,6 +368,32 @@ const styles = StyleSheet.create({
   loadingContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  emptyContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 32,
+  },
+  emptyTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.text,
+    marginTop: 24,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  emptyText: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 24,
+    marginBottom: 32,
+  },
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 32,
   },
   scrollView: {
     flex: 1,

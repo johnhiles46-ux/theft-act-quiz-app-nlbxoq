@@ -24,7 +24,7 @@ export default function HomeScreen() {
     <>
       <Stack.Screen
         options={{
-          title: 'Theft Act 1968 Quiz',
+          title: 'Quiz App',
           headerStyle: {
             backgroundColor: colors.primary,
           },
@@ -44,89 +44,51 @@ export default function HomeScreen() {
             <View style={styles.iconContainer}>
               <IconSymbol name="book.fill" size={64} color={colors.primary} />
             </View>
-            <Text style={styles.heroTitle}>Theft Act 1968</Text>
-            <Text style={styles.heroSubtitle}>Interactive Quiz App</Text>
+            <Text style={styles.heroTitle}>Quiz App</Text>
+            <Text style={styles.heroSubtitle}>Interactive Learning</Text>
           </View>
 
-          {/* Description Card */}
-          <View style={[commonStyles.card, styles.descriptionCard]}>
-            <Text style={styles.descriptionTitle}>Learn Through Practice</Text>
-            <Text style={styles.descriptionText}>
-              Master the key elements of the Theft Act 1968 through interactive
-              fill-in-the-blank exercises. Test your knowledge of essential legal
-              terms and definitions.
+          {/* Empty State Card */}
+          <View style={[commonStyles.card, styles.emptyStateCard]}>
+            <IconSymbol 
+              name="exclamationmark.triangle.fill" 
+              size={48} 
+              color={colors.textSecondary} 
+              style={styles.emptyIcon}
+            />
+            <Text style={styles.emptyStateTitle}>No Content Available</Text>
+            <Text style={styles.emptyStateText}>
+              All questions and information have been cleared. Please add new content to start using the quiz app.
             </Text>
           </View>
 
-          {/* Features List */}
-          <View style={[commonStyles.card, styles.featuresCard]}>
-            <Text style={styles.featuresTitle}>Features</Text>
+          {/* Info Card */}
+          <View style={[commonStyles.card, styles.infoCard]}>
+            <Text style={styles.infoTitle}>What&apos;s Next?</Text>
+            <Text style={styles.infoText}>
+              To use this quiz app, you&apos;ll need to add questions and content. The app supports:
+            </Text>
             <View style={styles.featureItem}>
-              <IconSymbol
-                name="checkmark.circle.fill"
-                size={24}
-                color={colors.success}
-              />
-              <Text style={styles.featureText}>
-                Dynamic questions from all major sections
-              </Text>
+              <Text style={styles.bulletPoint}>•</Text>
+              <Text style={styles.featureText}>Multiple-choice questions</Text>
             </View>
             <View style={styles.featureItem}>
-              <IconSymbol
-                name="checkmark.circle.fill"
-                size={24}
-                color={colors.success}
-              />
-              <Text style={styles.featureText}>
-                Instant feedback on your answers
-              </Text>
+              <Text style={styles.bulletPoint}>•</Text>
+              <Text style={styles.featureText}>Fill-in-the-blank exercises</Text>
             </View>
             <View style={styles.featureItem}>
-              <IconSymbol
-                name="checkmark.circle.fill"
-                size={24}
-                color={colors.success}
-              />
-              <Text style={styles.featureText}>
-                Score tracking to monitor progress
-              </Text>
+              <Text style={styles.bulletPoint}>•</Text>
+              <Text style={styles.featureText}>Instant feedback and scoring</Text>
             </View>
             <View style={styles.featureItem}>
-              <IconSymbol
-                name="checkmark.circle.fill"
-                size={24}
-                color={colors.success}
-              />
-              <Text style={styles.featureText}>
-                Randomized questions for varied practice
-              </Text>
+              <Text style={styles.bulletPoint}>•</Text>
+              <Text style={styles.featureText}>Dynamic question generation</Text>
             </View>
           </View>
 
-          {/* Sections Covered */}
-          <View style={[commonStyles.card, styles.sectionsCard]}>
-            <Text style={styles.sectionsTitle}>Sections Covered</Text>
-            <View style={styles.sectionsList}>
-              <Text style={styles.sectionItem}>• Basic definition of theft</Text>
-              <Text style={styles.sectionItem}>• Dishonesty</Text>
-              <Text style={styles.sectionItem}>• Appropriation</Text>
-              <Text style={styles.sectionItem}>• Property</Text>
-              <Text style={styles.sectionItem}>• Belonging to another</Text>
-              <Text style={styles.sectionItem}>
-                • Intention of permanently depriving
-              </Text>
-              <Text style={styles.sectionItem}>• Robbery</Text>
-              <Text style={styles.sectionItem}>• Burglary</Text>
-              <Text style={styles.sectionItem}>• Handling stolen goods</Text>
-              <Text style={styles.sectionItem}>
-                • Obtaining property by deception
-              </Text>
-            </View>
-          </View>
-
-          {/* Start Button */}
+          {/* Start Button (Disabled) */}
           <TouchableOpacity
-            style={[buttonStyles.primaryButton, styles.startButton]}
+            style={[buttonStyles.primaryButton, styles.startButton, styles.disabledButton]}
             onPress={handleStartQuiz}
           >
             <Text style={[buttonStyles.buttonText, styles.startButtonText]}>
@@ -143,9 +105,8 @@ export default function HomeScreen() {
           {/* Footer Info */}
           <View style={styles.footerInfo}>
             <Text style={styles.footerText}>
-              All content sourced from the Theft Act 1968 (UK)
+              Ready to learn? Add your content to get started!
             </Text>
-            <Text style={styles.footerText}>Public Domain</Text>
           </View>
         </ScrollView>
       </View>
@@ -188,57 +149,59 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     textAlign: 'center',
   },
-  descriptionCard: {
+  emptyStateCard: {
+    marginBottom: 16,
+    alignItems: 'center',
+    paddingVertical: 32,
+  },
+  emptyIcon: {
     marginBottom: 16,
   },
-  descriptionTitle: {
+  emptyStateTitle: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  emptyStateText: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: colors.textSecondary,
+    textAlign: 'center',
+  },
+  infoCard: {
+    marginBottom: 24,
+  },
+  infoTitle: {
     fontSize: 20,
     fontWeight: '600',
     color: colors.text,
     marginBottom: 12,
   },
-  descriptionText: {
+  infoText: {
     fontSize: 16,
     lineHeight: 24,
     color: colors.textSecondary,
-  },
-  featuresCard: {
-    marginBottom: 16,
-  },
-  featuresTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: colors.text,
     marginBottom: 16,
   },
   featureItem: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  featureText: {
-    fontSize: 16,
-    color: colors.text,
-    marginLeft: 12,
-    flex: 1,
-  },
-  sectionsCard: {
-    marginBottom: 24,
-  },
-  sectionsTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: colors.text,
-    marginBottom: 16,
-  },
-  sectionsList: {
+    alignItems: 'flex-start',
+    marginBottom: 8,
     paddingLeft: 8,
   },
-  sectionItem: {
+  bulletPoint: {
+    fontSize: 16,
+    color: colors.primary,
+    marginRight: 8,
+    fontWeight: '700',
+  },
+  featureText: {
     fontSize: 15,
-    lineHeight: 24,
-    color: colors.textSecondary,
-    marginBottom: 6,
+    color: colors.text,
+    flex: 1,
+    lineHeight: 22,
   },
   startButton: {
     flexDirection: 'row',
@@ -246,6 +209,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 18,
     marginBottom: 24,
+  },
+  disabledButton: {
+    opacity: 0.6,
   },
   startButtonText: {
     fontSize: 18,
@@ -259,7 +225,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   footerText: {
-    fontSize: 12,
+    fontSize: 14,
     color: colors.textSecondary,
     textAlign: 'center',
     marginBottom: 4,
