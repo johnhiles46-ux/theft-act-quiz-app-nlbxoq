@@ -20,6 +20,11 @@ export default function HomeScreen() {
     router.push('/(tabs)/(home)/quiz');
   };
 
+  const handleListenToLegislation = () => {
+    console.log('Opening listen to legislation...');
+    router.push('/(tabs)/(home)/listen');
+  };
+
   return (
     <>
       <Stack.Screen
@@ -128,7 +133,7 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          {/* Start Button */}
+          {/* Action Buttons */}
           <TouchableOpacity
             style={[buttonStyles.primaryButton, styles.startButton]}
             onPress={handleStartQuiz}
@@ -142,6 +147,21 @@ export default function HomeScreen() {
               color="#FFFFFF"
               style={styles.startButtonIcon}
             />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[buttonStyles.secondaryButton, styles.listenButton]}
+            onPress={handleListenToLegislation}
+          >
+            <IconSymbol
+              name="speaker.wave.2.fill"
+              size={24}
+              color="#FFFFFF"
+              style={styles.listenButtonIcon}
+            />
+            <Text style={[buttonStyles.buttonText, styles.listenButtonText]}>
+              Listen to Legislation
+            </Text>
           </TouchableOpacity>
 
           {/* Footer Info */}
@@ -292,7 +312,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 18,
-    marginBottom: 24,
+    marginBottom: 12,
   },
   startButtonText: {
     fontSize: 18,
@@ -300,6 +320,19 @@ const styles = StyleSheet.create({
   },
   startButtonIcon: {
     marginLeft: 4,
+  },
+  listenButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 18,
+    marginBottom: 24,
+  },
+  listenButtonIcon: {
+    marginRight: 8,
+  },
+  listenButtonText: {
+    fontSize: 18,
   },
   footerInfo: {
     alignItems: 'center',
