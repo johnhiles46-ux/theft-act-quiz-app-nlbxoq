@@ -175,24 +175,10 @@ export default function QuizScreen() {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       }
 
-      Alert.alert(
-        'Quiz Saved!',
-        'Your quiz results have been saved. You can review them in the Results section.',
-        [
-          {
-            text: 'View Results',
-            onPress: () => router.push('/(tabs)/results'),
-          },
-          {
-            text: 'Continue Quiz',
-            onPress: () => {
-              // Reset for next question
-              setScore({ correct: 0, total: 0 });
-              loadNewQuestion();
-            },
-          },
-        ]
-      );
+      console.log('Quiz result saved successfully');
+
+      // Navigate back to home page
+      router.push('/(tabs)/(home)');
     } catch (error) {
       console.error('Error saving quiz result:', error);
       Alert.alert('Error', 'Failed to save quiz results. Please try again.');

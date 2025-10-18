@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { Stack, useRouter } from 'expo-router';
+import React, { useState, useCallback } from 'react';
+import { Stack, useRouter, useFocusEffect } from 'expo-router';
 import {
   View,
   Text,
@@ -12,9 +12,29 @@ import {
 } from 'react-native';
 import { IconSymbol } from '@/components/IconSymbol';
 import { colors, commonStyles, buttonStyles } from '@/styles/commonStyles';
+import { getQuizResults, QuizResult } from '@/utils/quizStorage';
 
 export default function HomeScreen() {
   const router = useRouter();
+  const [recentResults, setRecentResults] = useState<QuizResult[]>([]);
+
+  // Load recent results when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      loadRecentResults();
+    }, [])
+  );
+
+  const loadRecentResults = async () => {
+    try {
+      const results = await getQuizResults();
+      // Get the 3 most recent results
+      setRecentResults(results.slice(0, 3));
+      console.log('Loaded recent results:', results.length);
+    } catch (error) {
+      console.error('Error loading recent results:', error);
+    }
+  };
 
   const handleStartQuiz = () => {
     console.log('Starting quiz...');
@@ -24,6 +44,38 @@ export default function HomeScreen() {
   const handleListenToLegislation = () => {
     console.log('Opening listen to legislation...');
     router.push('/(tabs)/(home)/listen');
+  };
+
+  const handleViewAllResults = () => {
+    console.log('Viewing all results...');
+    router.push('/(tabs)/results');
+  };
+
+  const formatDate = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    
+    return date.toLocaleDateString('en-GB', { 
+      day: 'numeric', 
+      month: 'short',
+      year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+    });
+  };
+
+  const getScoreColor = (correct: number, total: number) => {
+    const percentage = (correct / total) * 100;
+    if (percentage === 100) return colors.success;
+    if (percentage >= 70) return colors.accent;
+    return colors.error;
   };
 
   return (
@@ -57,6 +109,61 @@ export default function HomeScreen() {
             <Text style={styles.heroTitle}>SWP Learning tool</Text>
             <Text style={styles.heroSubtitle}>Master UK Legislation</Text>
           </View>
+
+          {/* Recent Results Section */}
+          {recentResults.length > 0 && (
+            <View style={[commonStyles.card, styles.recentResultsCard]}>
+              <View style={styles.recentResultsHeader}>
+                <Text style={styles.recentResultsTitle}>Recent Results</Text>
+                <TouchableOpacity onPress={handleViewAllResults}>
+                  <Text style={styles.viewAllText}>View All</Text>
+                </TouchableOpacity>
+              </View>
+              
+              {recentResults.map((result) => (
+                <TouchableOpacity
+                  key={result.id}
+                  style={styles.resultItem}
+                  onPress={handleViewAllResults}
+                >
+                  <View style={styles.resultLeft}>
+                    <View style={[
+                      styles.scoreCircle,
+                      { backgroundColor: getScoreColor(result.score.correct, result.score.total) }
+                    ]}>
+                      <Text style={styles.scoreCircleText}>
+                        {result.score.correct}/{result.score.total}
+                      </Text>
+                    </View>
+                    <View style={styles.resultInfo}>
+                      <Text style={styles.resultSection} numberOfLines={1}>
+                        {result.sectionTitle}
+                      </Text>
+                      <Text style={styles.resultTime}>{formatDate(result.timestamp)}</Text>
+                    </View>
+                  </View>
+                  <View style={styles.resultRight}>
+                    <View style={[
+                      styles.modeBadge,
+                      result.mode === 'advanced' && styles.modeBadgeAdvanced
+                    ]}>
+                      <Text style={[
+                        styles.modeBadgeText,
+                        result.mode === 'advanced' && styles.modeBadgeTextAdvanced
+                      ]}>
+                        {result.mode === 'advanced' ? 'Advanced' : 'Standard'}
+                      </Text>
+                    </View>
+                    <IconSymbol
+                      name="chevron.right"
+                      size={20}
+                      color={colors.textSecondary}
+                    />
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
 
           {/* Stats Card */}
           <View style={[commonStyles.card, styles.statsCard]}>
@@ -228,6 +335,88 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: colors.textSecondary,
     textAlign: 'center',
+  },
+  recentResultsCard: {
+    marginBottom: 16,
+  },
+  recentResultsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  recentResultsTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  viewAllText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.primary,
+  },
+  resultItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    backgroundColor: colors.highlight,
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  resultLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  scoreCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  scoreCircleText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  resultInfo: {
+    flex: 1,
+  },
+  resultSection: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 2,
+  },
+  resultTime: {
+    fontSize: 13,
+    color: colors.textSecondary,
+  },
+  resultRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  modeBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    backgroundColor: colors.primary + '20',
+  },
+  modeBadgeAdvanced: {
+    backgroundColor: colors.accent + '20',
+  },
+  modeBadgeText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: colors.primary,
+  },
+  modeBadgeTextAdvanced: {
+    color: colors.accent,
   },
   statsCard: {
     marginBottom: 16,
