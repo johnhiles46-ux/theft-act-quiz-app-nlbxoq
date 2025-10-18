@@ -1,91 +1,175 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { IconSymbol } from "@/components/IconSymbol";
-import { GlassView } from "expo-glass-effect";
-import { useTheme } from "@react-navigation/native";
+
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, Platform } from 'react-native';
+import { Stack } from 'expo-router';
+import { IconSymbol } from '@/components/IconSymbol';
+import { colors, commonStyles } from '@/styles/commonStyles';
 
 export default function ProfileScreen() {
-  const theme = useTheme();
-
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]} edges={['top']}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={[
-          styles.contentContainer,
-          Platform.OS !== 'ios' && styles.contentContainerWithTabBar
-        ]}
-      >
-        <GlassView style={[
-          styles.profileHeader,
-          Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
-        ]} glassEffectStyle="regular">
-          <IconSymbol name="person.circle.fill" size={80} color={theme.colors.primary} />
-          <Text style={[styles.name, { color: theme.colors.text }]}>John Doe</Text>
-          <Text style={[styles.email, { color: theme.dark ? '#98989D' : '#666' }]}>john.doe@example.com</Text>
-        </GlassView>
+    <>
+      <Stack.Screen
+        options={{
+          title: 'About',
+          headerStyle: {
+            backgroundColor: colors.primary,
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+            fontWeight: '600',
+          },
+        }}
+      />
+      <View style={commonStyles.container}>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {/* App Info Card */}
+          <View style={[commonStyles.card, styles.infoCard]}>
+            <View style={styles.iconContainer}>
+              <IconSymbol name="info.circle.fill" size={48} color={colors.primary} />
+            </View>
+            <Text style={styles.appName}>Theft Act 1968 Quiz</Text>
+            <Text style={styles.version}>Version 1.0.0</Text>
+          </View>
 
-        <GlassView style={[
-          styles.section,
-          Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
-        ]} glassEffectStyle="regular">
-          <View style={styles.infoRow}>
-            <IconSymbol name="phone.fill" size={20} color={theme.dark ? '#98989D' : '#666'} />
-            <Text style={[styles.infoText, { color: theme.colors.text }]}>+1 (555) 123-4567</Text>
+          {/* Description Card */}
+          <View style={[commonStyles.card, styles.descriptionCard]}>
+            <Text style={styles.cardTitle}>About This App</Text>
+            <Text style={styles.cardText}>
+              This interactive quiz app helps users learn and memorize key elements
+              of the Theft Act 1968 (UK) through fill-in-the-blank exercises and
+              instant feedback.
+            </Text>
           </View>
-          <View style={styles.infoRow}>
-            <IconSymbol name="location.fill" size={20} color={theme.dark ? '#98989D' : '#666'} />
-            <Text style={[styles.infoText, { color: theme.colors.text }]}>San Francisco, CA</Text>
+
+          {/* Features Card */}
+          <View style={[commonStyles.card, styles.featuresCard]}>
+            <Text style={styles.cardTitle}>Key Features</Text>
+            <View style={styles.featureItem}>
+              <IconSymbol name="checkmark.circle" size={20} color={colors.success} />
+              <Text style={styles.featureText}>
+                Dynamic question generation
+              </Text>
+            </View>
+            <View style={styles.featureItem}>
+              <IconSymbol name="checkmark.circle" size={20} color={colors.success} />
+              <Text style={styles.featureText}>
+                Instant answer validation
+              </Text>
+            </View>
+            <View style={styles.featureItem}>
+              <IconSymbol name="checkmark.circle" size={20} color={colors.success} />
+              <Text style={styles.featureText}>
+                Score tracking
+              </Text>
+            </View>
+            <View style={styles.featureItem}>
+              <IconSymbol name="checkmark.circle" size={20} color={colors.success} />
+              <Text style={styles.featureText}>
+                Randomized practice questions
+              </Text>
+            </View>
           </View>
-        </GlassView>
-      </ScrollView>
-    </SafeAreaView>
+
+          {/* Legal Info Card */}
+          <View style={[commonStyles.card, styles.legalCard]}>
+            <Text style={styles.cardTitle}>Legal Information</Text>
+            <Text style={styles.cardText}>
+              All content is sourced from the Theft Act 1968 (UK), which is in the
+              public domain. This app is designed for educational purposes to help
+              students and professionals learn UK criminal law.
+            </Text>
+          </View>
+
+          {/* Footer */}
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>
+              Built with React Native & Expo
+            </Text>
+            <Text style={styles.footerText}>
+              © 2024 Theft Act Quiz App
+            </Text>
+          </View>
+        </ScrollView>
+      </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    // backgroundColor handled dynamically
-  },
-  container: {
+  scrollView: {
     flex: 1,
   },
-  contentContainer: {
+  scrollContent: {
     padding: 20,
+    paddingBottom: Platform.OS === 'ios' ? 40 : 100,
   },
-  contentContainerWithTabBar: {
-    paddingBottom: 100, // Extra padding for floating tab bar
-  },
-  profileHeader: {
+  infoCard: {
     alignItems: 'center',
-    borderRadius: 12,
-    padding: 32,
     marginBottom: 16,
-    gap: 12,
+    paddingVertical: 24,
   },
-  name: {
+  iconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: colors.highlight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  appName: {
     fontSize: 24,
-    fontWeight: 'bold',
-    // color handled dynamically
+    fontWeight: '700',
+    color: colors.text,
+    textAlign: 'center',
+    marginBottom: 8,
   },
-  email: {
-    fontSize: 16,
-    // color handled dynamically
+  version: {
+    fontSize: 14,
+    color: colors.textSecondary,
   },
-  section: {
-    borderRadius: 12,
-    padding: 20,
-    gap: 12,
+  descriptionCard: {
+    marginBottom: 16,
   },
-  infoRow: {
+  featuresCard: {
+    marginBottom: 16,
+  },
+  legalCard: {
+    marginBottom: 24,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 12,
+  },
+  cardText: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: colors.textSecondary,
+  },
+  featureItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    marginBottom: 10,
   },
-  infoText: {
-    fontSize: 16,
-    // color handled dynamically
+  featureText: {
+    fontSize: 15,
+    color: colors.text,
+    marginLeft: 10,
+    flex: 1,
+  },
+  footer: {
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  footerText: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginBottom: 4,
   },
 });

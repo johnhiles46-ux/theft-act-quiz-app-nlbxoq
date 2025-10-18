@@ -1,161 +1,267 @@
-import React from "react";
-import { Stack, Link } from "expo-router";
-import { FlatList, Pressable, StyleSheet, View, Text, Alert, Platform } from "react-native";
-import { IconSymbol } from "@/components/IconSymbol";
-import { GlassView } from "expo-glass-effect";
-import { useTheme } from "@react-navigation/native";
 
-const ICON_COLOR = "#007AFF";
+import React from 'react';
+import { Stack, useRouter } from 'expo-router';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Platform,
+} from 'react-native';
+import { IconSymbol } from '@/components/IconSymbol';
+import { colors, commonStyles, buttonStyles } from '@/styles/commonStyles';
 
 export default function HomeScreen() {
-  const theme = useTheme();
-  const modalDemos = [
-    {
-      title: "Standard Modal",
-      description: "Full screen modal presentation",
-      route: "/modal",
-      color: "#007AFF",
-    },
-    {
-      title: "Form Sheet",
-      description: "Bottom sheet with detents and grabber",
-      route: "/formsheet",
-      color: "#34C759",
-    },
-    {
-      title: "Transparent Modal",
-      description: "Overlay without obscuring background",
-      route: "/transparent-modal",
-      color: "#FF9500",
-    }
-  ];
+  const router = useRouter();
 
-  const renderModalDemo = ({ item }: { item: (typeof modalDemos)[0] }) => (
-    <GlassView style={[
-      styles.demoCard,
-      Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
-    ]} glassEffectStyle="regular">
-      <View style={[styles.demoIcon, { backgroundColor: item.color }]}>
-        <IconSymbol name="square.grid.3x3" color="white" size={24} />
-      </View>
-      <View style={styles.demoContent}>
-        <Text style={[styles.demoTitle, { color: theme.colors.text }]}>{item.title}</Text>
-        <Text style={[styles.demoDescription, { color: theme.dark ? '#98989D' : '#666' }]}>{item.description}</Text>
-      </View>
-      <Link href={item.route as any} asChild>
-        <Pressable>
-          <GlassView style={[
-            styles.tryButton,
-            Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.08)' }
-          ]} glassEffectStyle="clear">
-            <Text style={[styles.tryButtonText, { color: theme.colors.primary }]}>Try It</Text>
-          </GlassView>
-        </Pressable>
-      </Link>
-    </GlassView>
-  );
-
-  const renderHeaderRight = () => (
-    <Pressable
-      onPress={() => Alert.alert("Not Implemented", "This feature is not implemented yet")}
-      style={styles.headerButtonContainer}
-    >
-      <IconSymbol name="plus" color={theme.colors.primary} />
-    </Pressable>
-  );
-
-  const renderHeaderLeft = () => (
-    <Pressable
-      onPress={() => Alert.alert("Not Implemented", "This feature is not implemented yet")}
-      style={styles.headerButtonContainer}
-    >
-      <IconSymbol
-        name="gear"
-        color={theme.colors.primary}
-      />
-    </Pressable>
-  );
+  const handleStartQuiz = () => {
+    console.log('Starting quiz...');
+    router.push('/(tabs)/(home)/quiz');
+  };
 
   return (
     <>
-      {Platform.OS === 'ios' && (
-        <Stack.Screen
-          options={{
-            title: "Building the app...",
-            headerRight: renderHeaderRight,
-            headerLeft: renderHeaderLeft,
-          }}
-        />
-      )}
-      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <FlatList
-          data={modalDemos}
-          renderItem={renderModalDemo}
-          keyExtractor={(item) => item.route}
-          contentContainerStyle={[
-            styles.listContainer,
-            Platform.OS !== 'ios' && styles.listContainerWithTabBar
-          ]}
-          contentInsetAdjustmentBehavior="automatic"
-          showsVerticalScrollIndicator={false}
-        />
+      <Stack.Screen
+        options={{
+          title: 'Theft Act 1968 Quiz',
+          headerStyle: {
+            backgroundColor: colors.primary,
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+            fontWeight: '600',
+          },
+        }}
+      />
+      <View style={commonStyles.container}>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {/* Hero Section */}
+          <View style={styles.heroSection}>
+            <View style={styles.iconContainer}>
+              <IconSymbol name="book.fill" size={64} color={colors.primary} />
+            </View>
+            <Text style={styles.heroTitle}>Theft Act 1968</Text>
+            <Text style={styles.heroSubtitle}>Interactive Quiz App</Text>
+          </View>
+
+          {/* Description Card */}
+          <View style={[commonStyles.card, styles.descriptionCard]}>
+            <Text style={styles.descriptionTitle}>Learn Through Practice</Text>
+            <Text style={styles.descriptionText}>
+              Master the key elements of the Theft Act 1968 through interactive
+              fill-in-the-blank exercises. Test your knowledge of essential legal
+              terms and definitions.
+            </Text>
+          </View>
+
+          {/* Features List */}
+          <View style={[commonStyles.card, styles.featuresCard]}>
+            <Text style={styles.featuresTitle}>Features</Text>
+            <View style={styles.featureItem}>
+              <IconSymbol
+                name="checkmark.circle.fill"
+                size={24}
+                color={colors.success}
+              />
+              <Text style={styles.featureText}>
+                Dynamic questions from all major sections
+              </Text>
+            </View>
+            <View style={styles.featureItem}>
+              <IconSymbol
+                name="checkmark.circle.fill"
+                size={24}
+                color={colors.success}
+              />
+              <Text style={styles.featureText}>
+                Instant feedback on your answers
+              </Text>
+            </View>
+            <View style={styles.featureItem}>
+              <IconSymbol
+                name="checkmark.circle.fill"
+                size={24}
+                color={colors.success}
+              />
+              <Text style={styles.featureText}>
+                Score tracking to monitor progress
+              </Text>
+            </View>
+            <View style={styles.featureItem}>
+              <IconSymbol
+                name="checkmark.circle.fill"
+                size={24}
+                color={colors.success}
+              />
+              <Text style={styles.featureText}>
+                Randomized questions for varied practice
+              </Text>
+            </View>
+          </View>
+
+          {/* Sections Covered */}
+          <View style={[commonStyles.card, styles.sectionsCard]}>
+            <Text style={styles.sectionsTitle}>Sections Covered</Text>
+            <View style={styles.sectionsList}>
+              <Text style={styles.sectionItem}>• Basic definition of theft</Text>
+              <Text style={styles.sectionItem}>• Dishonesty</Text>
+              <Text style={styles.sectionItem}>• Appropriation</Text>
+              <Text style={styles.sectionItem}>• Property</Text>
+              <Text style={styles.sectionItem}>• Belonging to another</Text>
+              <Text style={styles.sectionItem}>
+                • Intention of permanently depriving
+              </Text>
+              <Text style={styles.sectionItem}>• Robbery</Text>
+              <Text style={styles.sectionItem}>• Burglary</Text>
+              <Text style={styles.sectionItem}>• Handling stolen goods</Text>
+              <Text style={styles.sectionItem}>
+                • Obtaining property by deception
+              </Text>
+            </View>
+          </View>
+
+          {/* Start Button */}
+          <TouchableOpacity
+            style={[buttonStyles.primaryButton, styles.startButton]}
+            onPress={handleStartQuiz}
+          >
+            <Text style={[buttonStyles.buttonText, styles.startButtonText]}>
+              Start Quiz
+            </Text>
+            <IconSymbol
+              name="arrow.right.circle.fill"
+              size={24}
+              color="#FFFFFF"
+              style={styles.startButtonIcon}
+            />
+          </TouchableOpacity>
+
+          {/* Footer Info */}
+          <View style={styles.footerInfo}>
+            <Text style={styles.footerText}>
+              All content sourced from the Theft Act 1968 (UK)
+            </Text>
+            <Text style={styles.footerText}>Public Domain</Text>
+          </View>
+        </ScrollView>
       </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  scrollView: {
     flex: 1,
-    // backgroundColor handled dynamically
   },
-  listContainer: {
-    paddingVertical: 16,
-    paddingHorizontal: 16,
+  scrollContent: {
+    padding: 20,
+    paddingBottom: Platform.OS === 'ios' ? 40 : 100,
   },
-  listContainerWithTabBar: {
-    paddingBottom: 100, // Extra padding for floating tab bar
-  },
-  demoCard: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    flexDirection: 'row',
+  heroSection: {
     alignItems: 'center',
+    marginBottom: 24,
+    marginTop: 20,
   },
-  demoIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+  iconContainer: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: colors.highlight,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 16,
+    marginBottom: 16,
   },
-  demoContent: {
+  heroTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: colors.text,
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  heroSubtitle: {
+    fontSize: 18,
+    fontWeight: '500',
+    color: colors.textSecondary,
+    textAlign: 'center',
+  },
+  descriptionCard: {
+    marginBottom: 16,
+  },
+  descriptionTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 12,
+  },
+  descriptionText: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: colors.textSecondary,
+  },
+  featuresCard: {
+    marginBottom: 16,
+  },
+  featuresTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 16,
+  },
+  featureItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  featureText: {
+    fontSize: 16,
+    color: colors.text,
+    marginLeft: 12,
     flex: 1,
   },
-  demoTitle: {
+  sectionsCard: {
+    marginBottom: 24,
+  },
+  sectionsTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 16,
+  },
+  sectionsList: {
+    paddingLeft: 8,
+  },
+  sectionItem: {
+    fontSize: 15,
+    lineHeight: 24,
+    color: colors.textSecondary,
+    marginBottom: 6,
+  },
+  startButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 18,
+    marginBottom: 24,
+  },
+  startButtonText: {
     fontSize: 18,
-    fontWeight: '600',
+    marginRight: 8,
+  },
+  startButtonIcon: {
+    marginLeft: 4,
+  },
+  footerInfo: {
+    alignItems: 'center',
+    paddingVertical: 16,
+  },
+  footerText: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    textAlign: 'center',
     marginBottom: 4,
-    // color handled dynamically
-  },
-  demoDescription: {
-    fontSize: 14,
-    lineHeight: 18,
-    // color handled dynamically
-  },
-  headerButtonContainer: {
-    padding: 6,
-  },
-  tryButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 6,
-  },
-  tryButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    // color handled dynamically
   },
 });
