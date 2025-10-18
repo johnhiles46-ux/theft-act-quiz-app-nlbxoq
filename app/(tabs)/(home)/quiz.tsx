@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Platform,
+  TextInput,
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { IconSymbol } from '@/components/IconSymbol';
@@ -21,6 +22,8 @@ export default function QuizScreen() {
   const [showFeedback, setShowFeedback] = useState(false);
   const [score, setScore] = useState({ correct: 0, total: 0 });
   const [noQuestionsAvailable, setNoQuestionsAvailable] = useState(false);
+  const [isAdvancedMode, setIsAdvancedMode] = useState(false);
+  const [freeTypeAnswers, setFreeTypeAnswers] = useState<string[]>([]);
 
   useEffect(() => {
     loadNewQuestion();
@@ -37,6 +40,7 @@ export default function QuizScreen() {
     setCheckedAnswers(new Array(newQuestion.blanks.length).fill(false));
     setShowFeedback(false);
     setNoQuestionsAvailable(false);
+    setFreeTypeAnswers(new Array(newQuestion.blanks.length).fill(''));
     console.log('New question loaded:', newQuestion.section);
   };
 
@@ -62,6 +66,29 @@ export default function QuizScreen() {
     });
 
     console.log(`Blank ${blankIndex} selected: ${selectedOption}`);
+  };
+
+  const handleFreeTypeChange = (blankIndex: number, text: string) => {
+    if (showFeedback) return; // Don't allow changes after checking
+
+    const updatedAnswers = [...freeTypeAnswers];
+    updatedAnswers[blankIndex] = text;
+    setFreeTypeAnswers(updatedAnswers);
+
+    // Also update the question blanks for consistency
+    if (!question) return;
+    const updatedBlanks = [...question.blanks];
+    updatedBlanks[blankIndex] = {
+      ...updatedBlanks[blankIndex],
+      selectedAnswer: text
+    };
+
+    setQuestion({
+      ...question,
+      blanks: updatedBlanks
+    });
+
+    console.log(`Blank ${blankIndex} free-type: ${text}`);
   };
 
   const handleCheckAnswers = () => {
@@ -108,6 +135,15 @@ export default function QuizScreen() {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
     loadNewQuestion();
+  };
+
+  const toggleMode = () => {
+    if (Platform.OS !== 'web') {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    }
+    setIsAdvancedMode(!isAdvancedMode);
+    loadNewQuestion(); // Load a new question when switching modes
+    console.log(`Switched to ${!isAdvancedMode ? 'Advanced' : 'Standard'} mode`);
   };
 
   const renderTextWithBlanks = () => {
@@ -225,6 +261,52 @@ export default function QuizScreen() {
     });
   };
 
+  const renderFreeTypeInputs = () => {
+    if (!question) return null;
+
+    return question.blanks.map((blank, blankIndex) => {
+      const isCorrect = checkedAnswers[blankIndex];
+      const hasBeenChecked = showFeedback;
+      const userAnswer = freeTypeAnswers[blankIndex];
+
+      return (
+        <View key={`freetype-${blankIndex}`} style={styles.freeTypeContainer}>
+          <Text style={styles.freeTypeLabel}>Blank {blankIndex + 1}:</Text>
+          <View style={styles.freeTypeInputWrapper}>
+            <TextInput
+              style={[
+                styles.freeTypeInput,
+                hasBeenChecked && isCorrect && styles.freeTypeInputCorrect,
+                hasBeenChecked && !isCorrect && styles.freeTypeInputIncorrect,
+              ]}
+              value={userAnswer}
+              onChangeText={(text) => handleFreeTypeChange(blankIndex, text)}
+              placeholder="Type your answer here..."
+              placeholderTextColor={colors.textSecondary}
+              editable={!hasBeenChecked}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            {hasBeenChecked && (
+              <IconSymbol
+                name={isCorrect ? 'checkmark.circle.fill' : 'xmark.circle.fill'}
+                size={24}
+                color={isCorrect ? colors.success : colors.error}
+                style={styles.freeTypeIcon}
+              />
+            )}
+          </View>
+          {hasBeenChecked && !isCorrect && (
+            <View style={styles.correctAnswerHint}>
+              <Text style={styles.correctAnswerLabel}>Correct answer: </Text>
+              <Text style={styles.correctAnswerText}>{blank.word}</Text>
+            </View>
+          )}
+        </View>
+      );
+    });
+  };
+
   if (noQuestionsAvailable) {
     return (
       <>
@@ -294,6 +376,65 @@ export default function QuizScreen() {
             </Text>
           </View>
 
+          {/* Mode Toggle */}
+          <View style={styles.modeToggleContainer}>
+            <TouchableOpacity
+              style={[
+                styles.modeToggleButton,
+                !isAdvancedMode && styles.modeToggleButtonActive
+              ]}
+              onPress={() => !isAdvancedMode ? null : toggleMode()}
+            >
+              <IconSymbol
+                name="list.bullet"
+                size={20}
+                color={!isAdvancedMode ? '#FFFFFF' : colors.text}
+                style={styles.modeToggleIcon}
+              />
+              <Text style={[
+                styles.modeToggleText,
+                !isAdvancedMode && styles.modeToggleTextActive
+              ]}>
+                Standard
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.modeToggleButton,
+                isAdvancedMode && styles.modeToggleButtonActive
+              ]}
+              onPress={() => isAdvancedMode ? null : toggleMode()}
+            >
+              <IconSymbol
+                name="pencil"
+                size={20}
+                color={isAdvancedMode ? '#FFFFFF' : colors.text}
+                style={styles.modeToggleIcon}
+              />
+              <Text style={[
+                styles.modeToggleText,
+                isAdvancedMode && styles.modeToggleTextActive
+              ]}>
+                Advanced
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Mode Description */}
+          <View style={styles.modeDescriptionCard}>
+            <IconSymbol
+              name="info.circle.fill"
+              size={20}
+              color={colors.primary}
+              style={styles.modeDescriptionIcon}
+            />
+            <Text style={styles.modeDescriptionText}>
+              {isAdvancedMode
+                ? 'Advanced Mode: Type your answers freely without multiple choice options.'
+                : 'Standard Mode: Select the correct answer from multiple choice options.'}
+            </Text>
+          </View>
+
           {/* Section Header */}
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionNumber}>{question.section}</Text>
@@ -303,14 +444,16 @@ export default function QuizScreen() {
           {/* Question Card */}
           <View style={[commonStyles.card, styles.questionCard]}>
             <Text style={styles.instructionText}>
-              Read the text and select the correct words for each blank. The selected words will appear in the paragraph:
+              {isAdvancedMode
+                ? 'Read the text and type the correct words for each blank. Your answers will appear in the paragraph:'
+                : 'Read the text and select the correct words for each blank. The selected words will appear in the paragraph:'}
             </Text>
             {renderTextWithBlanks()}
           </View>
 
-          {/* Multiple Choice Options */}
-          <View style={styles.multipleChoiceSection}>
-            {renderMultipleChoiceOptions()}
+          {/* Answer Input Section */}
+          <View style={styles.answerSection}>
+            {isAdvancedMode ? renderFreeTypeInputs() : renderMultipleChoiceOptions()}
           </View>
 
           {/* Action Buttons */}
@@ -361,7 +504,7 @@ export default function QuizScreen() {
                   />
                   <Text style={styles.feedbackPartialText}>
                     {checkedAnswers.filter(r => r).length} out of{' '}
-                    {question.blanks.length} correct. The correct answers are highlighted in green.
+                    {question.blanks.length} correct. {isAdvancedMode ? 'The correct answers are shown below.' : 'The correct answers are highlighted in green.'}
                   </Text>
                 </View>
               )}
@@ -427,6 +570,55 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.text,
   },
+  modeToggleContainer: {
+    flexDirection: 'row',
+    backgroundColor: colors.card,
+    borderRadius: 12,
+    padding: 4,
+    marginBottom: 16,
+    gap: 4,
+  },
+  modeToggleButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    backgroundColor: 'transparent',
+  },
+  modeToggleButtonActive: {
+    backgroundColor: colors.primary,
+  },
+  modeToggleIcon: {
+    marginRight: 6,
+  },
+  modeToggleText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  modeToggleTextActive: {
+    color: '#FFFFFF',
+  },
+  modeDescriptionCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.highlight,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+  },
+  modeDescriptionIcon: {
+    marginRight: 8,
+  },
+  modeDescriptionText: {
+    flex: 1,
+    fontSize: 14,
+    color: colors.text,
+    lineHeight: 20,
+  },
   sectionHeader: {
     marginBottom: 16,
   },
@@ -490,7 +682,7 @@ const styles = StyleSheet.create({
   blankIcon: {
     marginLeft: 4,
   },
-  multipleChoiceSection: {
+  answerSection: {
     marginBottom: 16,
   },
   optionsContainer: {
@@ -564,6 +756,58 @@ const styles = StyleSheet.create({
   },
   optionIcon: {
     marginLeft: 6,
+  },
+  freeTypeContainer: {
+    marginBottom: 20,
+  },
+  freeTypeLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 8,
+  },
+  freeTypeInputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  freeTypeInput: {
+    flex: 1,
+    backgroundColor: colors.card,
+    borderWidth: 2,
+    borderColor: colors.textSecondary,
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    color: colors.text,
+  },
+  freeTypeInputCorrect: {
+    borderColor: colors.success,
+    backgroundColor: '#E8F5E9',
+  },
+  freeTypeInputIncorrect: {
+    borderColor: colors.error,
+    backgroundColor: '#FFEBEE',
+  },
+  freeTypeIcon: {
+    marginLeft: 4,
+  },
+  correctAnswerHint: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+    paddingHorizontal: 8,
+  },
+  correctAnswerLabel: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    fontStyle: 'italic',
+  },
+  correctAnswerText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.success,
   },
   buttonContainer: {
     marginBottom: 16,
