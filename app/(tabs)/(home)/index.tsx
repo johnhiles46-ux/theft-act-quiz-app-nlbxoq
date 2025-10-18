@@ -49,7 +49,7 @@ export default function HomeScreen() {
           <View style={styles.heroSection}>
             <View style={styles.logoContainer}>
               <Image
-                source={{ uri: 'https://upload.wikimedia.org/wikipedia/en/thumb/4/42/South_Wales_Police_logo.svg/800px-South_Wales_Police_logo.svg.png' }}
+                source={require('@/assets/images/04f34e69-2e42-4854-be9e-410592f0e89c.jpeg')}
                 style={styles.logo}
                 resizeMode="contain"
               />
