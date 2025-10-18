@@ -11,6 +11,7 @@ export interface BlankItem {
   word: string;
   position: number;
   options: string[]; // Array of 4 options (1 correct + 3 incorrect)
+  selectedAnswer?: string;
 }
 
 // Theft Act 1968 Sections
@@ -122,6 +123,20 @@ export const allSections = [
   ...policeActSections
 ];
 
+// Filler words to exclude from being keywords
+const fillerWords = [
+  'a', 'an', 'the', 'and', 'or', 'but', 'if', 'of', 'to', 'in', 'on', 'at', 'by', 'for',
+  'with', 'from', 'as', 'is', 'was', 'are', 'were', 'be', 'been', 'being', 'have', 'has',
+  'had', 'do', 'does', 'did', 'will', 'would', 'should', 'could', 'may', 'might', 'must',
+  'can', 'shall', 'it', 'its', 'this', 'that', 'these', 'those', 'he', 'she', 'they',
+  'them', 'their', 'his', 'her', 'him', 'than', 'then', 'so', 'such', 'any', 'some',
+  'all', 'each', 'every', 'both', 'either', 'neither', 'not', 'no', 'nor', 'only',
+  'own', 'same', 'other', 'another', 'such', 'no', 'nor', 'not', 'only', 'own', 'same',
+  'so', 'than', 'too', 'very', 'just', 'where', 'when', 'who', 'which', 'what', 'how',
+  'why', 'there', 'here', 'up', 'down', 'out', 'off', 'over', 'under', 'again', 'further',
+  'once', 'now', 'then', 'also', 'more', 'most', 'much', 'many', 'few', 'less', 'least'
+];
+
 // Expanded pool of incorrect options for generating distractors
 const incorrectOptionsPool: string[] = [
   // Common legal terms
@@ -163,6 +178,11 @@ const incorrectOptionsPool: string[] = [
   'WIFE', 'PACE', 'TWOC', 'INTENT', 'fear'
 ];
 
+// Function to check if a word is a filler word
+function isFillerWord(word: string): boolean {
+  return fillerWords.includes(word.toLowerCase());
+}
+
 // Function to generate contextually relevant incorrect options
 function generateIncorrectOptions(correctAnswer: string, allKeywords: string[]): string[] {
   const incorrect: string[] = [];
@@ -170,7 +190,7 @@ function generateIncorrectOptions(correctAnswer: string, allKeywords: string[]):
   
   // First, try to get similar words from the same section's keywords
   const similarWords = allKeywords.filter(
-    keyword => keyword.toLowerCase() !== lowerCorrect && keyword.length > 2
+    keyword => keyword.toLowerCase() !== lowerCorrect && keyword.length > 2 && !isFillerWord(keyword)
   );
   
   // Add some similar words from the section
@@ -196,7 +216,7 @@ function generateIncorrectOptions(correctAnswer: string, allKeywords: string[]):
   }
   
   // If still not enough, add some generic options
-  const genericOptions = ['other', 'such', 'any', 'some', 'all', 'each', 'every', 'both'];
+  const genericOptions = ['such', 'each', 'every', 'both', 'none', 'either', 'neither', 'several'];
   while (incorrect.length < 3) {
     const randomIndex = Math.floor(Math.random() * genericOptions.length);
     const word = genericOptions[randomIndex];
@@ -223,27 +243,53 @@ export function generateQuestion(): QuizQuestion | null {
     return null;
   }
 
-  // Determine how many blanks to create (1-3 blanks)
-  const numBlanks = Math.min(
-    Math.floor(Math.random() * 3) + 1,
-    section.keywords.length
-  );
+  // Filter out filler words from keywords
+  const meaningfulKeywords = section.keywords.filter(keyword => !isFillerWord(keyword));
+
+  if (meaningfulKeywords.length < 5) {
+    console.log('Not enough meaningful keywords in section, trying another section');
+    // Try to find a section with at least 5 meaningful keywords
+    const validSections = allSections.filter(s => {
+      const meaningful = s.keywords.filter(k => !isFillerWord(k));
+      return meaningful.length >= 5;
+    });
+    
+    if (validSections.length === 0) {
+      console.log('No sections with at least 5 meaningful keywords found');
+      return null;
+    }
+    
+    const validSection = validSections[Math.floor(Math.random() * validSections.length)];
+    return generateQuestionFromSection(validSection);
+  }
+
+  return generateQuestionFromSection(section);
+}
+
+function generateQuestionFromSection(section: any): QuizQuestion | null {
+  // Filter out filler words from keywords
+  const meaningfulKeywords = section.keywords.filter((keyword: string) => !isFillerWord(keyword));
+
+  // Ensure we have at least 5 meaningful keywords
+  const numBlanks = Math.max(5, Math.min(meaningfulKeywords.length, 7));
 
   // Select random keywords to blank out
-  const shuffledKeywords = [...section.keywords].sort(() => Math.random() - 0.5);
+  const shuffledKeywords = [...meaningfulKeywords].sort(() => Math.random() - 0.5);
   const selectedKeywords = shuffledKeywords.slice(0, numBlanks);
 
   // Create blanks array with positions and options
   const blanks: BlankItem[] = [];
   let modifiedText = section.content;
+  const replacements: { original: string; placeholder: string; position: number }[] = [];
 
-  selectedKeywords.forEach((keyword) => {
+  selectedKeywords.forEach((keyword: string, index: number) => {
     // Find the position of the keyword in the text (case-insensitive)
     const regex = new RegExp(`\\b${keyword}\\b`, 'i');
     const match = modifiedText.match(regex);
     
     if (match && match.index !== undefined) {
       const position = match.index;
+      const placeholder = `___${index}___`;
       
       // Generate incorrect options
       const incorrectOptions = generateIncorrectOptions(keyword, section.keywords);
@@ -254,25 +300,38 @@ export function generateQuestion(): QuizQuestion | null {
       blanks.push({
         word: keyword,
         position: position,
-        options: options
+        options: options,
+        selectedAnswer: undefined
       });
 
-      // Replace the keyword with a blank placeholder
-      modifiedText = modifiedText.replace(regex, '______');
+      replacements.push({
+        original: keyword,
+        placeholder: placeholder,
+        position: position
+      });
     }
   });
 
-  if (blanks.length === 0) {
-    console.log('No blanks could be created for this section');
+  if (blanks.length < 5) {
+    console.log('Could not create at least 5 blanks for this section');
     return null;
   }
+
+  // Sort replacements by position (descending) to replace from end to start
+  replacements.sort((a, b) => b.position - a.position);
+
+  // Replace keywords with placeholders
+  replacements.forEach(replacement => {
+    const regex = new RegExp(`\\b${replacement.original}\\b`, 'i');
+    modifiedText = modifiedText.replace(regex, replacement.placeholder);
+  });
 
   // Sort blanks by position
   blanks.sort((a, b) => a.position - b.position);
 
   return {
     id: `${section.title}-${Date.now()}`,
-    section: section.title.split(' ')[0], // e.g., "Section"
+    section: section.title.split(' ')[0],
     sectionTitle: section.title,
     text: modifiedText,
     blanks: blanks
@@ -285,3 +344,632 @@ export function checkAnswer(userAnswer: string, correctAnswer: string): boolean 
   const normalizedCorrect = correctAnswer.trim().toLowerCase();
   return normalizedUser === normalizedCorrect;
 }
+</write file>
+
+<write file="app/(tabs)/(home)/quiz.tsx">
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+  Platform,
+} from 'react-native';
+import { Stack, useRouter } from 'expo-router';
+import { IconSymbol } from '@/components/IconSymbol';
+import { colors, commonStyles, buttonStyles } from '@/styles/commonStyles';
+import { generateQuestion, checkAnswer, QuizQuestion, BlankItem } from '@/data/theftActData';
+import * as Haptics from 'expo-haptics';
+
+export default function QuizScreen() {
+  const router = useRouter();
+  const [question, setQuestion] = useState<QuizQuestion | null>(null);
+  const [checkedAnswers, setCheckedAnswers] = useState<boolean[]>([]);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [score, setScore] = useState({ correct: 0, total: 0 });
+  const [noQuestionsAvailable, setNoQuestionsAvailable] = useState(false);
+
+  useEffect(() => {
+    loadNewQuestion();
+  }, []);
+
+  const loadNewQuestion = () => {
+    const newQuestion = generateQuestion();
+    if (!newQuestion) {
+      setNoQuestionsAvailable(true);
+      console.log('No questions available');
+      return;
+    }
+    setQuestion(newQuestion);
+    setCheckedAnswers(new Array(newQuestion.blanks.length).fill(false));
+    setShowFeedback(false);
+    setNoQuestionsAvailable(false);
+    console.log('New question loaded:', newQuestion.section);
+  };
+
+  const handleOptionSelect = (blankIndex: number, selectedOption: string) => {
+    if (showFeedback) return; // Don't allow changes after checking
+
+    if (Platform.OS !== 'web') {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+
+    if (!question) return;
+
+    // Update the selected answer in the blanks array
+    const updatedBlanks = [...question.blanks];
+    updatedBlanks[blankIndex] = {
+      ...updatedBlanks[blankIndex],
+      selectedAnswer: selectedOption
+    };
+
+    setQuestion({
+      ...question,
+      blanks: updatedBlanks
+    });
+
+    console.log(`Blank ${blankIndex} selected: ${selectedOption}`);
+  };
+
+  const handleCheckAnswers = () => {
+    if (!question) return;
+
+    // Check if all blanks have been answered
+    const allAnswered = question.blanks.every(blank => blank.selectedAnswer !== undefined && blank.selectedAnswer !== '');
+    if (!allAnswered) {
+      if (Platform.OS !== 'web') {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      }
+      console.log('Please answer all questions before checking');
+      return;
+    }
+
+    const results = question.blanks.map((blank) => {
+      return checkAnswer(blank.selectedAnswer || '', blank.word);
+    });
+
+    setCheckedAnswers(results);
+    setShowFeedback(true);
+
+    const correctCount = results.filter(r => r).length;
+    setScore({
+      correct: score.correct + correctCount,
+      total: score.total + question.blanks.length,
+    });
+
+    if (correctCount === question.blanks.length) {
+      if (Platform.OS !== 'web') {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+      console.log('All answers correct!');
+    } else {
+      if (Platform.OS !== 'web') {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      }
+      console.log(`${correctCount} out of ${question.blanks.length} correct`);
+    }
+  };
+
+  const handleRefresh = () => {
+    if (Platform.OS !== 'web') {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    }
+    loadNewQuestion();
+  };
+
+  const renderTextWithBlanks = () => {
+    if (!question) return null;
+
+    const parts: JSX.Element[] = [];
+    let currentText = question.text;
+    
+    // Process each blank placeholder
+    question.blanks.forEach((blank, index) => {
+      const placeholder = `___${index}___`;
+      const placeholderIndex = currentText.indexOf(placeholder);
+      
+      if (placeholderIndex !== -1) {
+        // Add text before the placeholder
+        if (placeholderIndex > 0) {
+          const textBefore = currentText.substring(0, placeholderIndex);
+          parts.push(
+            <Text key={`text-${index}`} style={styles.questionText}>
+              {textBefore}
+            </Text>
+          );
+        }
+        
+        // Add the blank with selected answer or placeholder
+        const isCorrect = checkedAnswers[index];
+        const hasBeenChecked = showFeedback;
+        const selectedAnswer = blank.selectedAnswer;
+
+        parts.push(
+          <View key={`blank-${index}`} style={styles.blankIndicator}>
+            <Text
+              style={[
+                styles.blankText,
+                selectedAnswer && styles.blankTextFilled,
+                hasBeenChecked && isCorrect && styles.blankTextCorrect,
+                hasBeenChecked && !isCorrect && styles.blankTextIncorrect,
+              ]}
+            >
+              {selectedAnswer || `[${index + 1}]`}
+            </Text>
+            {hasBeenChecked && (
+              <IconSymbol
+                name={isCorrect ? 'checkmark.circle.fill' : 'xmark.circle.fill'}
+                size={16}
+                color={isCorrect ? colors.success : colors.error}
+                style={styles.blankIcon}
+              />
+            )}
+          </View>
+        );
+        
+        // Update current text to the part after the placeholder
+        currentText = currentText.substring(placeholderIndex + placeholder.length);
+      }
+    });
+    
+    // Add any remaining text
+    if (currentText.length > 0) {
+      parts.push(
+        <Text key="text-final" style={styles.questionText}>
+          {currentText}
+        </Text>
+      );
+    }
+
+    return <View style={styles.questionContainer}>{parts}</View>;
+  };
+
+  const renderMultipleChoiceOptions = () => {
+    if (!question) return null;
+
+    return question.blanks.map((blank, blankIndex) => {
+      const isCorrect = checkedAnswers[blankIndex];
+      const hasBeenChecked = showFeedback;
+      const selectedAnswer = blank.selectedAnswer;
+
+      return (
+        <View key={`options-${blankIndex}`} style={styles.optionsContainer}>
+          <Text style={styles.optionsLabel}>Blank {blankIndex + 1}:</Text>
+          <View style={styles.optionsGrid}>
+            {blank.options.map((option, optionIndex) => {
+              const isSelected = selectedAnswer === option;
+              const isCorrectOption = option.toLowerCase() === blank.word.toLowerCase();
+              
+              let buttonStyle = [styles.optionButton];
+              let textStyle = [styles.optionText];
+
+              if (isSelected && !hasBeenChecked) {
+                buttonStyle.push(styles.optionButtonSelected);
+                textStyle.push(styles.optionTextSelected);
+              }
+
+              if (hasBeenChecked) {
+                if (isSelected && isCorrect) {
+                  buttonStyle.push(styles.optionButtonCorrect);
+                  textStyle.push(styles.optionTextCorrect);
+                } else if (isSelected && !isCorrect) {
+                  buttonStyle.push(styles.optionButtonIncorrect);
+                  textStyle.push(styles.optionTextIncorrect);
+                } else if (isCorrectOption) {
+                  buttonStyle.push(styles.optionButtonShowCorrect);
+                  textStyle.push(styles.optionTextShowCorrect);
+                } else {
+                  buttonStyle.push(styles.optionButtonDisabled);
+                  textStyle.push(styles.optionTextDisabled);
+                }
+              }
+
+              return (
+                <TouchableOpacity
+                  key={`option-${blankIndex}-${optionIndex}`}
+                  style={buttonStyle}
+                  onPress={() => handleOptionSelect(blankIndex, option)}
+                  disabled={hasBeenChecked}
+                >
+                  <Text style={textStyle}>{option}</Text>
+                  {hasBeenChecked && isCorrectOption && (
+                    <IconSymbol
+                      name="checkmark.circle.fill"
+                      size={18}
+                      color={colors.success}
+                      style={styles.optionIcon}
+                    />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+      );
+    });
+  };
+
+  if (noQuestionsAvailable) {
+    return (
+      <>
+        <Stack.Screen
+          options={{
+            title: 'Quiz',
+            headerLeft: () => (
+              <TouchableOpacity
+                onPress={() => router.back()}
+                style={styles.headerButton}
+              >
+                <IconSymbol name="chevron.left" size={24} color={colors.primary} />
+              </TouchableOpacity>
+            ),
+          }}
+        />
+        <View style={[commonStyles.container, styles.emptyContainer]}>
+          <IconSymbol name="exclamationmark.triangle.fill" size={64} color={colors.textSecondary} />
+          <Text style={styles.emptyTitle}>No Questions Available</Text>
+          <Text style={styles.emptyText}>
+            All questions have been cleared. Please add new content to start the quiz.
+          </Text>
+          <TouchableOpacity
+            style={[buttonStyles.primaryButton, styles.backButton]}
+            onPress={() => router.back()}
+          >
+            <IconSymbol name="chevron.left" size={20} color="#FFFFFF" style={styles.buttonIcon} />
+            <Text style={buttonStyles.buttonText}>Go Back</Text>
+          </TouchableOpacity>
+        </View>
+      </>
+    );
+  }
+
+  if (!question) {
+    return (
+      <View style={[commonStyles.container, styles.loadingContainer]}>
+        <Text style={commonStyles.text}>Loading question...</Text>
+      </View>
+    );
+  }
+
+  return (
+    <>
+      <Stack.Screen
+        options={{
+          title: 'Quiz',
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={styles.headerButton}
+            >
+              <IconSymbol name="chevron.left" size={24} color={colors.primary} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <View style={commonStyles.container}>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {/* Score Display */}
+          <View style={styles.scoreCard}>
+            <Text style={styles.scoreText}>
+              Score: {score.correct} / {score.total}
+            </Text>
+          </View>
+
+          {/* Section Header */}
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionNumber}>{question.section}</Text>
+            <Text style={styles.sectionTitle}>{question.sectionTitle}</Text>
+          </View>
+
+          {/* Question Card */}
+          <View style={[commonStyles.card, styles.questionCard]}>
+            <Text style={styles.instructionText}>
+              Read the text and select the correct words for each blank. The selected words will appear in the paragraph:
+            </Text>
+            {renderTextWithBlanks()}
+          </View>
+
+          {/* Multiple Choice Options */}
+          <View style={styles.multipleChoiceSection}>
+            {renderMultipleChoiceOptions()}
+          </View>
+
+          {/* Action Buttons */}
+          <View style={styles.buttonContainer}>
+            {!showFeedback ? (
+              <TouchableOpacity
+                style={[buttonStyles.primaryButton, styles.button]}
+                onPress={handleCheckAnswers}
+              >
+                <Text style={buttonStyles.buttonText}>Check Answers</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={[buttonStyles.accentButton, styles.button]}
+                onPress={handleRefresh}
+              >
+                <IconSymbol
+                  name="arrow.clockwise"
+                  size={20}
+                  color="#FFFFFF"
+                  style={styles.buttonIcon}
+                />
+                <Text style={buttonStyles.buttonText}>Next Question</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {/* Feedback Message */}
+          {showFeedback && (
+            <View style={styles.feedbackCard}>
+              {checkedAnswers.every(r => r) ? (
+                <View style={styles.feedbackSuccess}>
+                  <IconSymbol
+                    name="checkmark.circle.fill"
+                    size={32}
+                    color={colors.success}
+                  />
+                  <Text style={styles.feedbackSuccessText}>
+                    Perfect! All answers correct!
+                  </Text>
+                </View>
+              ) : (
+                <View style={styles.feedbackPartial}>
+                  <IconSymbol
+                    name="exclamationmark.circle.fill"
+                    size={32}
+                    color={colors.accent}
+                  />
+                  <Text style={styles.feedbackPartialText}>
+                    {checkedAnswers.filter(r => r).length} out of{' '}
+                    {question.blanks.length} correct. The correct answers are highlighted in green.
+                  </Text>
+                </View>
+              )}
+            </View>
+          )}
+        </ScrollView>
+      </View>
+    </>
+  );
+}
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 32,
+  },
+  emptyTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.text,
+    marginTop: 24,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  emptyText: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 24,
+    marginBottom: 32,
+  },
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 32,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    padding: 16,
+    paddingBottom: 40,
+  },
+  headerButton: {
+    padding: 8,
+    marginLeft: 8,
+  },
+  scoreCard: {
+    backgroundColor: colors.highlight,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    alignItems: 'center',
+  },
+  scoreText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  sectionHeader: {
+    marginBottom: 16,
+  },
+  sectionNumber: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.primary,
+    marginBottom: 4,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: colors.text,
+  },
+  questionCard: {
+    marginBottom: 16,
+  },
+  instructionText: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    marginBottom: 12,
+    fontStyle: 'italic',
+  },
+  questionContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+  },
+  questionText: {
+    fontSize: 16,
+    lineHeight: 28,
+    color: colors.text,
+  },
+  blankIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 4,
+    marginVertical: 2,
+  },
+  blankText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.textSecondary,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+    backgroundColor: colors.highlight,
+  },
+  blankTextFilled: {
+    color: colors.primary,
+    backgroundColor: colors.highlight,
+  },
+  blankTextCorrect: {
+    color: colors.success,
+    backgroundColor: '#E8F5E9',
+  },
+  blankTextIncorrect: {
+    color: colors.error,
+    backgroundColor: '#FFEBEE',
+  },
+  blankIcon: {
+    marginLeft: 4,
+  },
+  multipleChoiceSection: {
+    marginBottom: 16,
+  },
+  optionsContainer: {
+    marginBottom: 20,
+  },
+  optionsLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 8,
+  },
+  optionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  optionButton: {
+    backgroundColor: colors.card,
+    borderWidth: 2,
+    borderColor: colors.textSecondary,
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    minWidth: '47%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  optionButtonSelected: {
+    borderColor: colors.primary,
+    backgroundColor: colors.highlight,
+  },
+  optionButtonCorrect: {
+    borderColor: colors.success,
+    backgroundColor: '#E8F5E9',
+  },
+  optionButtonIncorrect: {
+    borderColor: colors.error,
+    backgroundColor: '#FFEBEE',
+  },
+  optionButtonShowCorrect: {
+    borderColor: colors.success,
+    backgroundColor: '#E8F5E9',
+  },
+  optionButtonDisabled: {
+    opacity: 0.5,
+  },
+  optionText: {
+    fontSize: 15,
+    color: colors.text,
+    textAlign: 'center',
+  },
+  optionTextSelected: {
+    fontWeight: '600',
+    color: colors.primary,
+  },
+  optionTextCorrect: {
+    fontWeight: '600',
+    color: colors.success,
+  },
+  optionTextIncorrect: {
+    fontWeight: '600',
+    color: colors.error,
+  },
+  optionTextShowCorrect: {
+    fontWeight: '600',
+    color: colors.success,
+  },
+  optionTextDisabled: {
+    color: colors.textSecondary,
+  },
+  optionIcon: {
+    marginLeft: 6,
+  },
+  buttonContainer: {
+    marginBottom: 16,
+  },
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonIcon: {
+    marginRight: 8,
+  },
+  feedbackCard: {
+    marginBottom: 16,
+  },
+  feedbackSuccess: {
+    backgroundColor: '#E8F5E9',
+    borderRadius: 8,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  feedbackSuccessText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.success,
+    marginLeft: 12,
+    flex: 1,
+  },
+  feedbackPartial: {
+    backgroundColor: '#FFF8E1',
+    borderRadius: 8,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  feedbackPartialText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+    marginLeft: 12,
+    flex: 1,
+  },
+});
