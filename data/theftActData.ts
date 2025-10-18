@@ -367,6 +367,132 @@ export const theftActSections = [
   },
 ];
 
+// Criminal Damage Act 1971 content
+export const criminalDamageActSections = [
+  {
+    id: 'cd1',
+    section: 'Section 1(1)',
+    title: 'Destroying or damaging property',
+    fullText: 'A person who without lawful excuse destroys or damages any property belonging to another intending to destroy or damage any such property or being reckless as to whether any such property would be destroyed or damaged shall be guilty of an offence.',
+    keywords: ['lawful excuse', 'destroys', 'damages', 'property', 'belonging to another', 'intending', 'reckless', 'guilty', 'offence'],
+  },
+  {
+    id: 'cd2',
+    section: 'Section 1(2)',
+    title: 'Destroying or damaging property with intent to endanger life',
+    fullText: 'A person who without lawful excuse destroys or damages any property, whether belonging to himself or another, intending to destroy or damage any property or being reckless as to whether any property would be destroyed or damaged and intending by the destruction or damage to endanger the life of another or being reckless as to whether the life of another would be thereby endangered, shall be guilty of an offence.',
+    keywords: ['lawful excuse', 'destroys', 'damages', 'property', 'intending', 'reckless', 'endanger the life', 'another', 'guilty', 'offence'],
+  },
+  {
+    id: 'cd3',
+    section: 'Section 1(3)',
+    title: 'Maximum penalty for simple criminal damage',
+    fullText: 'An offence committed under this section by destroying or damaging property by fire shall be charged as arson.',
+    keywords: ['offence', 'destroying', 'damaging', 'property', 'fire', 'charged', 'arson'],
+  },
+  {
+    id: 'cd4',
+    section: 'Section 2',
+    title: 'Threats to destroy or damage property',
+    fullText: 'A person who without lawful excuse makes to another a threat, intending that that other would fear it would be carried out, to destroy or damage any property belonging to that other or a third person; or to destroy or damage his own property in a way which he knows is likely to endanger the life of that other or a third person; shall be guilty of an offence.',
+    keywords: ['lawful excuse', 'threat', 'intending', 'fear', 'carried out', 'destroy', 'damage', 'property', 'endanger the life', 'guilty', 'offence'],
+  },
+  {
+    id: 'cd5',
+    section: 'Section 3',
+    title: 'Possessing anything with intent to destroy or damage property',
+    fullText: 'A person who has anything in his custody or under his control intending without lawful excuse to use it or cause or permit another to use it to destroy or damage any property belonging to some other person; or to destroy or damage his own or the user\'s property in a way which he knows is likely to endanger the life of some other person; shall be guilty of an offence.',
+    keywords: ['custody', 'control', 'intending', 'lawful excuse', 'use', 'cause', 'permit', 'destroy', 'damage', 'property', 'endanger the life', 'guilty', 'offence'],
+  },
+  {
+    id: 'cd6',
+    section: 'Section 4(1)',
+    title: 'Maximum penalties - simple damage',
+    fullText: 'A person guilty of arson under section 1 above or of an offence under section 1(2) above (whether arson or not) shall on conviction on indictment be liable to imprisonment for life.',
+    keywords: ['guilty', 'arson', 'offence', 'conviction', 'indictment', 'liable', 'imprisonment', 'life'],
+  },
+  {
+    id: 'cd7',
+    section: 'Section 4(2)',
+    title: 'Maximum penalties - other offences',
+    fullText: 'A person guilty of an offence under section 1(1) above (other than arson) shall on conviction on indictment be liable to imprisonment for a term not exceeding ten years.',
+    keywords: ['guilty', 'offence', 'arson', 'conviction', 'indictment', 'liable', 'imprisonment', 'ten years'],
+  },
+  {
+    id: 'cd8',
+    section: 'Section 5(1)',
+    title: 'Without lawful excuse - general',
+    fullText: 'This section applies to any offence under section 1(1) above and any offence under section 2 or 3 above other than one involving a threat by the person charged to destroy or damage property in a way which he knows is likely to endanger the life of another or involving an intent by the person charged to use or cause or permit the use of something in his custody or under his control so to destroy or damage property.',
+    keywords: ['offence', 'threat', 'destroy', 'damage', 'property', 'endanger the life', 'intent', 'custody', 'control'],
+  },
+  {
+    id: 'cd9',
+    section: 'Section 5(2)(a)',
+    title: 'Lawful excuse - belief in consent',
+    fullText: 'A person charged with an offence to which this section applies shall, whether or not he would be treated for the purposes of this Act as having a lawful excuse apart from this subsection, be treated for those purposes as having a lawful excuse if at the time of the act or acts alleged to constitute the offence he believed that the person or persons whom he believed to be entitled to consent to the destruction of or damage to the property in question had so consented, or would have so consented to it if he or they had known of the destruction or damage and its circumstances.',
+    keywords: ['charged', 'offence', 'lawful excuse', 'believed', 'entitled', 'consent', 'destruction', 'damage', 'property', 'circumstances'],
+  },
+  {
+    id: 'cd10',
+    section: 'Section 5(2)(b)',
+    title: 'Lawful excuse - protection of property',
+    fullText: 'A person charged with an offence to which this section applies shall be treated as having a lawful excuse if he destroyed or damaged or threatened to destroy or damage the property in question or, in the case of a charge of an offence under section 3 above, intended to use or cause or permit the use of something to destroy or damage it, in order to protect property belonging to himself or another or a right or interest in property which was or which he believed to be vested in himself or another, and at the time of the act or acts alleged to constitute the offence he believed that the property, right or interest was in immediate need of protection; and that the means of protection adopted or proposed to be adopted were or would be reasonable having regard to all the circumstances.',
+    keywords: ['charged', 'offence', 'lawful excuse', 'destroyed', 'damaged', 'threatened', 'property', 'protect', 'right', 'interest', 'vested', 'believed', 'immediate need', 'protection', 'reasonable', 'circumstances'],
+  },
+  {
+    id: 'cd11',
+    section: 'Section 5(3)',
+    title: 'Honest belief sufficient',
+    fullText: 'For the purposes of this section it is immaterial whether a belief is justified or not if it is honestly held.',
+    keywords: ['immaterial', 'belief', 'justified', 'honestly held'],
+  },
+  {
+    id: 'cd12',
+    section: 'Section 5(4)',
+    title: 'Belief induced by intoxication',
+    fullText: 'For the purposes of this section a right or interest in property includes any right or privilege in or over land, whether created by grant, licence or otherwise.',
+    keywords: ['right', 'interest', 'property', 'privilege', 'land', 'grant', 'licence'],
+  },
+  {
+    id: 'cd13',
+    section: 'Section 5(5)',
+    title: 'Rights and interests in property',
+    fullText: 'This section shall not be construed as casting doubt on any defence recognised by law as a defence to criminal charges.',
+    keywords: ['construed', 'casting doubt', 'defence', 'recognised', 'law', 'criminal charges'],
+  },
+  {
+    id: 'cd14',
+    section: 'Section 10(1)',
+    title: 'Interpretation - property',
+    fullText: 'In this Act "property" means property of a tangible nature, whether real or personal, including money and including wild creatures which have been tamed or are ordinarily kept in captivity, and any other wild creatures or their carcases if, but only if, they have been reduced into possession which has not been lost or abandoned or are in the course of being reduced into possession; but property does not include mushrooms growing wild on any land or flowers, fruit or foliage of a plant growing wild on any land.',
+    keywords: ['property', 'tangible nature', 'real', 'personal', 'money', 'wild creatures', 'tamed', 'captivity', 'carcases', 'possession', 'abandoned', 'mushrooms', 'flowers', 'fruit', 'foliage'],
+  },
+  {
+    id: 'cd15',
+    section: 'Section 10(2)',
+    title: 'Interpretation - belonging to another',
+    fullText: 'Property shall be treated for the purposes of this Act as belonging to any person having the custody or control of it; having in it any proprietary right or interest (not being an equitable interest arising only from an agreement to transfer or grant an interest); or having a charge on it.',
+    keywords: ['Property', 'treated', 'belonging to', 'custody', 'control', 'proprietary right', 'interest', 'equitable interest', 'charge'],
+  },
+  {
+    id: 'cd16',
+    section: 'Section 10(3)',
+    title: 'Property of person with limited interest',
+    fullText: 'Where property is subject to a trust, the persons to whom it belongs shall be so treated as including any person having a right to enforce the trust.',
+    keywords: ['property', 'subject to', 'trust', 'belongs', 'treated', 'right', 'enforce'],
+  },
+  {
+    id: 'cd17',
+    section: 'Section 10(4)',
+    title: 'Property of corporation sole',
+    fullText: 'Property of a corporation sole shall be so treated as belonging to the corporation notwithstanding a vacancy in the corporation.',
+    keywords: ['Property', 'corporation sole', 'treated', 'belonging to', 'corporation', 'notwithstanding', 'vacancy'],
+  },
+];
+
+// Combine all sections for question generation
+export const allSections = [...theftActSections, ...criminalDamageActSections];
+
 // Expanded pool of incorrect options for generating distractors
 const incorrectOptionsPool = [
   // Honesty and mental state terms
@@ -428,6 +554,11 @@ const incorrectOptionsPool = [
   // Intent and purpose terms
   'purpose', 'objective', 'aim', 'goal', 'target', 'end',
   'motive', 'reason', 'cause', 'basis', 'ground', 'justification',
+  
+  // Criminal Damage specific terms
+  'arson', 'fire', 'explosion', 'vandalism', 'defacement', 'mutilation',
+  'demolition', 'destruction', 'ruination', 'wreckage', 'devastation',
+  'endangerment', 'peril', 'jeopardy', 'hazard', 'risk', 'menace',
 ];
 
 // Function to generate contextually relevant incorrect options
@@ -484,8 +615,8 @@ function generateIncorrectOptions(correctAnswer: string, allKeywords: string[]):
 
 // Function to generate a random question with blanks and multiple choice options
 export function generateQuestion(): QuizQuestion {
-  // Select a random section
-  const section = theftActSections[Math.floor(Math.random() * theftActSections.length)];
+  // Select a random section from all sections (Theft Act + Criminal Damage Act)
+  const section = allSections[Math.floor(Math.random() * allSections.length)];
   
   // Determine how many blanks to create (1-3, weighted towards 2)
   const rand = Math.random();
