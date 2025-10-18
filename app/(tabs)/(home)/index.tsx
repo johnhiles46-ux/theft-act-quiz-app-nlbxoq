@@ -8,6 +8,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Platform,
+  Image,
 } from 'react-native';
 import { IconSymbol } from '@/components/IconSymbol';
 import { colors, commonStyles, buttonStyles } from '@/styles/commonStyles';
@@ -46,8 +47,12 @@ export default function HomeScreen() {
         >
           {/* Hero Section */}
           <View style={styles.heroSection}>
-            <View style={styles.iconContainer}>
-              <IconSymbol name="book.fill" size={64} color={colors.primary} />
+            <View style={styles.logoContainer}>
+              <Image
+                source={{ uri: 'https://upload.wikimedia.org/wikipedia/en/thumb/4/42/South_Wales_Police_logo.svg/800px-South_Wales_Police_logo.svg.png' }}
+                style={styles.logo}
+                resizeMode="contain"
+              />
             </View>
             <Text style={styles.heroTitle}>LegalFill UK</Text>
             <Text style={styles.heroSubtitle}>Master UK Legislation</Text>
@@ -189,14 +194,27 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     marginTop: 20,
   },
-  iconContainer: {
+  logoContainer: {
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: colors.highlight,
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  logo: {
+    width: 100,
+    height: 100,
   },
   heroTitle: {
     fontSize: 28,
