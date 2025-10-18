@@ -30,7 +30,7 @@ export default function HomeScreen() {
     <>
       <Stack.Screen
         options={{
-          title: 'LegalFill UK',
+          title: 'SWP Learning tool',
           headerStyle: {
             backgroundColor: colors.primary,
           },
@@ -54,7 +54,7 @@ export default function HomeScreen() {
                 resizeMode="contain"
               />
             </View>
-            <Text style={styles.heroTitle}>LegalFill UK</Text>
+            <Text style={styles.heroTitle}>SWP Learning tool</Text>
             <Text style={styles.heroSubtitle}>Master UK Legislation</Text>
           </View>
 
