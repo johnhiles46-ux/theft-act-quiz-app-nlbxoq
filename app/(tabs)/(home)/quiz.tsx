@@ -11,13 +11,12 @@ import {
 import { Stack, useRouter } from 'expo-router';
 import { IconSymbol } from '@/components/IconSymbol';
 import { colors, commonStyles, buttonStyles } from '@/styles/commonStyles';
-import { generateQuestion, checkAnswer, QuizQuestion } from '@/data/theftActData';
+import { generateQuestion, checkAnswer, QuizQuestion, BlankItem } from '@/data/theftActData';
 import * as Haptics from 'expo-haptics';
 
 export default function QuizScreen() {
   const router = useRouter();
   const [question, setQuestion] = useState<QuizQuestion | null>(null);
-  const [userAnswers, setUserAnswers] = useState<string[]>([]);
   const [checkedAnswers, setCheckedAnswers] = useState<boolean[]>([]);
   const [showFeedback, setShowFeedback] = useState(false);
   const [score, setScore] = useState({ correct: 0, total: 0 });
@@ -35,7 +34,6 @@ export default function QuizScreen() {
       return;
     }
     setQuestion(newQuestion);
-    setUserAnswers(new Array(newQuestion.blanks.length).fill(''));
     setCheckedAnswers(new Array(newQuestion.blanks.length).fill(false));
     setShowFeedback(false);
     setNoQuestionsAvailable(false);
@@ -49,9 +47,20 @@ export default function QuizScreen() {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
 
-    const newAnswers = [...userAnswers];
-    newAnswers[blankIndex] = selectedOption;
-    setUserAnswers(newAnswers);
+    if (!question) return;
+
+    // Update the selected answer in the blanks array
+    const updatedBlanks = [...question.blanks];
+    updatedBlanks[blankIndex] = {
+      ...updatedBlanks[blankIndex],
+      selectedAnswer: selectedOption
+    };
+
+    setQuestion({
+      ...question,
+      blanks: updatedBlanks
+    });
+
     console.log(`Blank ${blankIndex} selected: ${selectedOption}`);
   };
 
@@ -59,7 +68,7 @@ export default function QuizScreen() {
     if (!question) return;
 
     // Check if all blanks have been answered
-    const allAnswered = userAnswers.every(answer => answer !== '');
+    const allAnswered = question.blanks.every(blank => blank.selectedAnswer !== undefined && blank.selectedAnswer !== '');
     if (!allAnswered) {
       if (Platform.OS !== 'web') {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
@@ -68,8 +77,8 @@ export default function QuizScreen() {
       return;
     }
 
-    const results = userAnswers.map((answer, index) => {
-      return checkAnswer(answer, question.blanks[index].word);
+    const results = question.blanks.map((blank) => {
+      return checkAnswer(blank.selectedAnswer || '', blank.word);
     });
 
     setCheckedAnswers(results);
@@ -121,19 +130,19 @@ export default function QuizScreen() {
       if (index < question.blanks.length) {
         const isCorrect = checkedAnswers[index];
         const hasBeenChecked = showFeedback;
-        const userAnswer = userAnswers[index];
+        const selectedAnswer = question.blanks[index].selectedAnswer;
 
         elements.push(
           <View key={`blank-${index}`} style={styles.blankIndicator}>
             <Text
               style={[
                 styles.blankText,
-                userAnswer && styles.blankTextFilled,
+                selectedAnswer && styles.blankTextFilled,
                 hasBeenChecked && isCorrect && styles.blankTextCorrect,
                 hasBeenChecked && !isCorrect && styles.blankTextIncorrect,
               ]}
             >
-              {userAnswer || `[${index + 1}]`}
+              {selectedAnswer || `[${index + 1}]`}
             </Text>
             {hasBeenChecked && (
               <IconSymbol
@@ -157,14 +166,14 @@ export default function QuizScreen() {
     return question.blanks.map((blank, blankIndex) => {
       const isCorrect = checkedAnswers[blankIndex];
       const hasBeenChecked = showFeedback;
-      const userAnswer = userAnswers[blankIndex];
+      const selectedAnswer = blank.selectedAnswer;
 
       return (
         <View key={`options-${blankIndex}`} style={styles.optionsContainer}>
           <Text style={styles.optionsLabel}>Blank {blankIndex + 1}:</Text>
           <View style={styles.optionsGrid}>
             {blank.options.map((option, optionIndex) => {
-              const isSelected = userAnswer === option;
+              const isSelected = selectedAnswer === option;
               const isCorrectOption = option.toLowerCase() === blank.word.toLowerCase();
               
               let buttonStyle = [styles.optionButton];
@@ -294,7 +303,7 @@ export default function QuizScreen() {
           {/* Question Card */}
           <View style={[commonStyles.card, styles.questionCard]}>
             <Text style={styles.instructionText}>
-              Read the text and select the correct words for each blank:
+              Read the text and select the correct words for each blank. The selected words will appear in the paragraph:
             </Text>
             {renderTextWithBlanks()}
           </View>
