@@ -42,6 +42,15 @@ export const buttonStyles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 8,
   },
+  successButton: {
+    backgroundColor: colors.success,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 8,
+  },
   buttonText: {
     color: '#FFFFFF',
     fontSize: 16,

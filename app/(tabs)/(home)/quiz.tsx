@@ -8,11 +8,13 @@ import {
   StyleSheet,
   Platform,
   TextInput,
+  Alert,
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { IconSymbol } from '@/components/IconSymbol';
 import { colors, commonStyles, buttonStyles } from '@/styles/commonStyles';
 import { generateQuestion, checkAnswer, QuizQuestion, BlankItem } from '@/data/theftActData';
+import { saveQuizResult, QuizResult, QuizResultItem } from '@/utils/quizStorage';
 import * as Haptics from 'expo-haptics';
 
 export default function QuizScreen() {
@@ -127,6 +129,73 @@ export default function QuizScreen() {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       }
       console.log(`${correctCount} out of ${question.blanks.length} correct`);
+    }
+  };
+
+  const handleFinished = async () => {
+    if (!question || !showFeedback) {
+      Alert.alert(
+        'Check Answers First',
+        'Please check your answers before finishing the quiz.'
+      );
+      return;
+    }
+
+    if (Platform.OS !== 'web') {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    }
+
+    try {
+      // Prepare quiz result items
+      const resultItems: QuizResultItem[] = question.blanks.map((blank, index) => ({
+        questionText: `Blank ${index + 1}`,
+        userAnswer: blank.selectedAnswer || '',
+        correctAnswer: blank.word,
+        isCorrect: checkedAnswers[index],
+      }));
+
+      // Create quiz result object
+      const quizResult: QuizResult = {
+        id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        timestamp: new Date().toISOString(),
+        section: question.section,
+        sectionTitle: question.sectionTitle,
+        score: {
+          correct: checkedAnswers.filter(r => r).length,
+          total: question.blanks.length,
+        },
+        mode: isAdvancedMode ? 'advanced' : 'standard',
+        items: resultItems,
+      };
+
+      // Save to storage
+      await saveQuizResult(quizResult);
+
+      if (Platform.OS !== 'web') {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+
+      Alert.alert(
+        'Quiz Saved!',
+        'Your quiz results have been saved. You can review them in the Results section.',
+        [
+          {
+            text: 'View Results',
+            onPress: () => router.push('/(tabs)/results'),
+          },
+          {
+            text: 'Continue Quiz',
+            onPress: () => {
+              // Reset for next question
+              setScore({ correct: 0, total: 0 });
+              loadNewQuestion();
+            },
+          },
+        ]
+      );
+    } catch (error) {
+      console.error('Error saving quiz result:', error);
+      Alert.alert('Error', 'Failed to save quiz results. Please try again.');
     }
   };
 
@@ -466,18 +535,32 @@ export default function QuizScreen() {
                 <Text style={buttonStyles.buttonText}>Check Answers</Text>
               </TouchableOpacity>
             ) : (
-              <TouchableOpacity
-                style={[buttonStyles.accentButton, styles.button]}
-                onPress={handleRefresh}
-              >
-                <IconSymbol
-                  name="arrow.clockwise"
-                  size={20}
-                  color="#FFFFFF"
-                  style={styles.buttonIcon}
-                />
-                <Text style={buttonStyles.buttonText}>Next Question</Text>
-              </TouchableOpacity>
+              <View style={styles.buttonRow}>
+                <TouchableOpacity
+                  style={[buttonStyles.successButton, styles.buttonHalf]}
+                  onPress={handleFinished}
+                >
+                  <IconSymbol
+                    name="checkmark.circle.fill"
+                    size={20}
+                    color="#FFFFFF"
+                    style={styles.buttonIcon}
+                  />
+                  <Text style={buttonStyles.buttonText}>Finished</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[buttonStyles.accentButton, styles.buttonHalf]}
+                  onPress={handleRefresh}
+                >
+                  <IconSymbol
+                    name="arrow.clockwise"
+                    size={20}
+                    color="#FFFFFF"
+                    style={styles.buttonIcon}
+                  />
+                  <Text style={buttonStyles.buttonText}>Next</Text>
+                </TouchableOpacity>
+              </View>
             )}
           </View>
 
@@ -813,6 +896,16 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  buttonHalf: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
