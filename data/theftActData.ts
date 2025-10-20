@@ -188,6 +188,35 @@ export const publicOrderActSections = [
     title: 'S1 Riot Public Order Act 1986',
     content: 'Where 12 or more persons who are present together use or threatens unlawful violence for a common purpose and the conduct of them (taken together) is such as would cause a person of reasonable firmness present at the scene to fear for his personal safety, each of the persons using unlawful violence for the common purpose is guilty of riot',
     keywords: ['Where', 'more', 'persons', 'present', 'together', 'use', 'threatens', 'unlawful', 'violence', 'common', 'purpose', 'conduct', 'taken', 'such', 'would', 'cause', 'person', 'reasonable', 'firmness', 'scene', 'fear', 'personal', 'safety', 'each', 'using', 'guilty', 'riot']
+  },
+  {
+    title: 'S2 Violent Disorder Public Order Act 1986',
+    content: 'Where 3 or more persons who are present together use or threatens unlawful violence and the conduct of them (taken together) is such as would cause a person of reasonable firmness present at the scene to fear for his personal safety, each of the persons using unlawful violence is guilty of violent disorder',
+    keywords: ['Where', 'more', 'persons', 'present', 'together', 'use', 'threatens', 'unlawful', 'violence', 'conduct', 'taken', 'such', 'would', 'cause', 'person', 'reasonable', 'firmness', 'scene', 'fear', 'personal', 'safety', 'each', 'using', 'guilty', 'violent', 'disorder']
+  },
+  {
+    title: 'S4a Intentional harassment, alarm, distress Public Order Act 1986',
+    content: 'A person is guilty of an offence, if with intent to cause a person harassment, alarm or distress, he: uses threatening, abusive or insulting words or behaviour or disorderly behaviour OR displays any writing, sign or other visible representation which is threatening, abusive or insulting thereby causing that or another person harassment, alarm or distress',
+    keywords: ['person', 'guilty', 'offence', 'intent', 'cause', 'harassment', 'alarm', 'distress', 'uses', 'threatening', 'abusive', 'insulting', 'words', 'behaviour', 'disorderly', 'displays', 'writing', 'sign', 'visible', 'representation', 'thereby', 'causing', 'another']
+  },
+  {
+    title: 'S4b Protection from harassment in public Public Order Act 1986',
+    content: 'A person (A) is guilty of an offence under this section if – (a) A commits an offence under S4a & (b) A carried out the conduct referred to in S4a (1) because of the relevant person\'s sex (or presumed sex)',
+    keywords: ['person', 'guilty', 'offence', 'section', 'commits', 'S4a', 'carried', 'conduct', 'referred', 'because', 'relevant', 'sex', 'presumed']
+  },
+  {
+    title: 'S5 Disorderly conduct Public Order Act 1986',
+    content: 'Uses threatening or abusive words or behaviour or, disorderly behaviour within the hearing or sight of a person OR likely to be caused harassment, alarm or distress. Displays any writing, sign or visible representation which is threatening or abusive in the sight of a person likely to be caused harassment, alarm or distress',
+    keywords: ['Uses', 'threatening', 'abusive', 'words', 'behaviour', 'disorderly', 'within', 'hearing', 'sight', 'person', 'likely', 'caused', 'harassment', 'alarm', 'distress', 'Displays', 'writing', 'sign', 'visible', 'representation']
+  }
+];
+
+// Common Law Offences
+export const commonLawOffences = [
+  {
+    title: 'Breach of the Peace Common Law Offence',
+    content: 'A breach of the peace is committed whenever harm is done, or is likely to be done to a person, or in his presence to his property or, whenever a person is in fear of being harmed through an assault, affray, riot, unlawful assembly or other disturbance',
+    keywords: ['breach', 'peace', 'committed', 'whenever', 'harm', 'done', 'likely', 'person', 'presence', 'property', 'fear', 'being', 'harmed', 'through', 'assault', 'affray', 'riot', 'unlawful', 'assembly', 'other', 'disturbance']
   }
 ];
 
@@ -200,7 +229,8 @@ export const allSections = [
   ...criminalJusticeActSections,
   ...emergencyWorkersActSections,
   ...policeActSections,
-  ...publicOrderActSections
+  ...publicOrderActSections,
+  ...commonLawOffences
 ];
 
 // Filler words to exclude from being keywords
@@ -271,7 +301,13 @@ const incorrectOptionsPool: string[] = [
   'subjected', 'having', 'entered', 'part', 'aggravated', 'imitation',
   'conveyance', 'allow', 'themselves', 'carried', 'drive', 'proved',
   'relation', 'MPV', 'unlawfully', 'recovered', 'driven', 'dangerously',
-  'public', 'place', 'road'
+  'public', 'place', 'road', 'wilfully', 'harassment', 'alarm',
+  'distress', 'abusive', 'insulting', 'disorderly', 'displays',
+  'writing', 'sign', 'visible', 'representation', 'thereby', 'causing',
+  'carried', 'conduct', 'referred', 'relevant', 'sex', 'presumed',
+  'hearing', 'sight', 'likely', 'caused', 'breach', 'peace',
+  'presence', 'harmed', 'affray', 'assembly', 'disturbance', 'violent',
+  'disorder', 'scene', 'together', 'using'
 ];
 
 // Function to check if a word is a filler word

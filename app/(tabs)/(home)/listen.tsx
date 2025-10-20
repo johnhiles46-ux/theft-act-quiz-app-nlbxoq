@@ -18,7 +18,11 @@ import {
   criminalDamageActSections,
   criminalAttemptsActSections,
   offencesAgainstPersonsActSections,
+  criminalJusticeActSections,
+  emergencyWorkersActSections,
   policeActSections,
+  publicOrderActSections,
+  commonLawOffences,
 } from '@/data/theftActData';
 
 interface LegislationSection {
@@ -44,7 +48,11 @@ export default function ListenScreen() {
     { name: 'Criminal Damage Act 1971', sections: criminalDamageActSections },
     { name: 'Criminal Attempts Act 1981', sections: criminalAttemptsActSections },
     { name: 'Offences Against the Persons Act 1861', sections: offencesAgainstPersonsActSections },
+    { name: 'Criminal Justice Act 1988', sections: criminalJusticeActSections },
+    { name: 'Emergency Workers (Obstruction) Act 2006', sections: emergencyWorkersActSections },
     { name: 'Police Act 1996', sections: policeActSections },
+    { name: 'Public Order Act 1986', sections: publicOrderActSections },
+    { name: 'Common Law Offences', sections: commonLawOffences },
   ];
 
   useEffect(() => {
