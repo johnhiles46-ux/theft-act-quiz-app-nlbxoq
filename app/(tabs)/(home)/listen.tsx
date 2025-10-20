@@ -16,6 +16,7 @@ import * as Haptics from 'expo-haptics';
 import {
   theftActSections,
   criminalDamageActSections,
+  criminalAttemptsActSections,
   offencesAgainstPersonsActSections,
   policeActSections,
 } from '@/data/theftActData';
@@ -41,6 +42,7 @@ export default function ListenScreen() {
   const categories: LegislationCategory[] = [
     { name: 'Theft Act 1968', sections: theftActSections },
     { name: 'Criminal Damage Act 1971', sections: criminalDamageActSections },
+    { name: 'Criminal Attempts Act 1981', sections: criminalAttemptsActSections },
     { name: 'Offences Against the Persons Act 1861', sections: offencesAgainstPersonsActSections },
     { name: 'Police Act 1996', sections: policeActSections },
   ];

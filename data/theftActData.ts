@@ -52,6 +52,11 @@ export const theftActSections = [
     keywords: ['commits', 'offence', 'mechanically', 'propelled', 'vehicle', 'unlawfully', 'taken', 'recovered', 'driven', 'dangerously', 'road', 'public', 'accident', 'injury', 'damage', 'property']
   },
   {
+    title: 'Section 12(5) Taking a Pedal Cycle',
+    content: 'A person shall be guilty of the offence if without the consent of the owner or other lawful authority, they take a pedal cycle for their own or anothers use OR rides a pedal cycle knowing it to have been taken without such authority',
+    keywords: ['guilty', 'offence', 'without', 'consent', 'owner', 'lawful', 'authority', 'take', 'pedal', 'cycle', 'their', 'own', 'anothers', 'use', 'rides', 'knowing', 'taken', 'such']
+  },
+  {
     title: 'Section 13 Abstracting Electricity',
     content: 'A person is guilty of an offence if he or she dishonestly uses it without due authority or dishonestly causes it to be diverted or wasted',
     keywords: ['dishonestly', 'uses', 'without', 'due', 'authority', 'causes', 'diverted', 'wasted']
@@ -60,25 +65,30 @@ export const theftActSections = [
     title: 'Section 22 Handling Stolen Goods',
     content: 'A person is guilty of an offence if otherwise than in the course of stealing, knowing or believing them to be stolen goods, dishonestly receives the goods or dishonestly undertakes or assists in their retention, removal, disposal, or realisation, by or for the benefit of another, or arranges to do any of the above',
     keywords: ['otherwise', 'course', 'stealing', 'knowing', 'believing', 'stolen', 'goods', 'dishonestly', 'receives', 'undertakes', 'assists', 'retention', 'removal', 'disposal', 'realisation', 'benefit', 'another', 'arranges']
+  },
+  {
+    title: 'Section 25 Going Equipped',
+    content: 'A person shall be guilty of an offence if when not at their place of abode, they have with them any article for use in the course of or in connection with any burglary or theft',
+    keywords: ['guilty', 'offence', 'when', 'not', 'their', 'place', 'abode', 'have', 'with', 'them', 'any', 'article', 'use', 'course', 'connection', 'burglary', 'theft']
   }
 ];
 
 // Criminal Damage Act 1971 Sections
 export const criminalDamageActSections = [
   {
-    title: 'Criminal Damage Act 1971 Section 1',
-    content: 'A person who without lawful excuse destroys or damages any property belonging to another intending to destroy or damage any such property or being reckless as to whether any such property would be destroyed or damaged shall be guilty of an offence',
+    title: 'Section 1(1) Criminal Damage',
+    content: 'A person who without lawful excuse destroys or damages any property belonging to another intending to destroy or damage such property or being reckless as to whether any such property would be destroyed or damaged shall be guilty of an offence',
     keywords: ['without', 'lawful', 'excuse', 'destroys', 'damages', 'property', 'belonging', 'another', 'intending', 'destroy', 'damage', 'reckless', 'whether', 'destroyed', 'damaged', 'guilty', 'offence']
   },
   {
-    title: 'Criminal Damage Act 1971 Section 1(2) Endangering Another\'s Life',
-    content: 'A person who without lawful excuse, destroys or damages any property, whether belonging to himself or another (a) intending to destroy or damage any property or being reckless as to whether any property would be destroyed or damaged by the destruction or damage to endanger the life of another or being reckless as to whether the life of another would be thereby endangered',
-    keywords: ['without', 'lawful', 'excuse', 'destroys', 'damages', 'property', 'whether', 'belonging', 'himself', 'another', 'intending', 'destroy', 'damage', 'reckless', 'destroyed', 'damaged', 'destruction', 'endanger', 'life', 'endangered']
+    title: 'Section 1(2) Criminal Damage, Endangering another\'s life',
+    content: 'A person without lawful excuse destroys or damages any property whether belonging to themselves or another: (a) Intending to destroy or damage any property or being reckless as to whether any property would be destroyed or damaged (b) Intending by the destruction or damage to endanger the life of another or being reckless as to whether the life of another would be thereby endangered',
+    keywords: ['without', 'lawful', 'excuse', 'destroys', 'damages', 'property', 'whether', 'belonging', 'themselves', 'another', 'Intending', 'destroy', 'damage', 'reckless', 'destroyed', 'damaged', 'destruction', 'endanger', 'life', 'endangered']
   },
   {
-    title: 'Criminal Damage Act 1971 Section 1(3) Arson',
-    content: 'If the damage or destruction is caused by fire, then the offence of arson should be charged. For a person to be found guilty of this offence at least some of the damage must have been caused by fire. For this offence to be proved there must be an intent or an element of recklessness in relation to the use of fire',
-    keywords: ['damage', 'destruction', 'caused', 'fire', 'offence', 'arson', 'charged', 'person', 'found', 'guilty', 'least', 'some', 'must', 'been', 'proved', 'intent', 'element', 'recklessness', 'relation', 'use']
+    title: 'Section 1(3) Arson',
+    content: 'If the damage or destruction is caused by fire, then the offence of Arson (under section 1(3)) should be charged',
+    keywords: ['damage', 'destruction', 'caused', 'fire', 'offence', 'Arson', 'section', 'charged']
   },
   {
     title: 'Section 2 Threats to Destroy or Damage Property',
@@ -89,6 +99,20 @@ export const criminalDamageActSections = [
     title: 'Section 3 Possessing an article with intent to cause Criminal Damage',
     content: 'A person who has an article in their custody or under their control intending without lawful excuse, to use it or cause or permit another to use it (a) To destroy or damage any property belonging to another person (b) To destroy or damage their own or the user\'s property in a way which they know is likely to endanger the life of some other person',
     keywords: ['person', 'article', 'custody', 'control', 'intending', 'without', 'lawful', 'excuse', 'use', 'cause', 'permit', 'another', 'destroy', 'damage', 'property', 'belonging', 'own', 'user', 'know', 'likely', 'endanger', 'life', 'some']
+  }
+];
+
+// Criminal Attempts Act 1981 Sections
+export const criminalAttemptsActSections = [
+  {
+    title: 'S1 Criminal Attempts',
+    content: 'If, with intent to commit an offence to which this section applies, a person does an act which is more than merely preparatory to the commission of the offence, they are guilty of attempting to commit the offence',
+    keywords: ['intent', 'commit', 'offence', 'which', 'section', 'applies', 'person', 'does', 'act', 'more', 'than', 'merely', 'preparatory', 'commission', 'guilty', 'attempting']
+  },
+  {
+    title: 'S9 Vehicle Interference',
+    content: 'A person is guilty of vehicle interference if they: Interfere with a motor vehicle or trailer or with anything carried in or on a MV or trailer, with the intention that one of the following offences shall be committed by themselves or another person: a. Theft of a MV or trailer or part of it b. Theft of anything carried in or on the MV or trailer c. An offence under S12 (1) of the theft act (TWOC)',
+    keywords: ['guilty', 'vehicle', 'interference', 'Interfere', 'motor', 'trailer', 'anything', 'carried', 'MV', 'intention', 'following', 'offences', 'committed', 'themselves', 'another', 'person', 'Theft', 'part', 'S12', 'theft', 'act', 'TWOC']
   }
 ];
 
@@ -171,6 +195,7 @@ export const publicOrderActSections = [
 export const allSections = [
   ...theftActSections,
   ...criminalDamageActSections,
+  ...criminalAttemptsActSections,
   ...offencesAgainstPersonsActSections,
   ...criminalJusticeActSections,
   ...emergencyWorkersActSections,
@@ -238,7 +263,10 @@ const incorrectOptionsPool: string[] = [
   'interfere', 'comfort', 'shock', 'mental', 'grievous',
   'wound', 'inflict', 'whatsoever', 'detainer', 'endanger',
   'custody', 'control', 'permit', 'article', 'noxious',
-  'destructive', 'aggrieve', 'annoy', 'spiking'
+  'destructive', 'aggrieve', 'annoy', 'spiking', 'preparatory',
+  'commission', 'attempting', 'interference', 'Interfere', 'motor',
+  'trailer', 'MV', 'pedal', 'cycle', 'abode', 'equipped',
+  'diverted', 'wasted', 'retention', 'realisation', 'arranges'
 ];
 
 // Function to check if a word is a filler word
