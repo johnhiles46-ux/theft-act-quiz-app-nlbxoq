@@ -79,20 +79,40 @@ export const criminalDamageActSections = [
     title: 'Criminal Damage Act 1971 Section 1(3) Arson',
     content: 'If the damage or destruction is caused by fire, then the offence of arson should be charged. For a person to be found guilty of this offence at least some of the damage must have been caused by fire. For this offence to be proved there must be an intent or an element of recklessness in relation to the use of fire',
     keywords: ['damage', 'destruction', 'caused', 'fire', 'offence', 'arson', 'charged', 'person', 'found', 'guilty', 'least', 'some', 'must', 'been', 'proved', 'intent', 'element', 'recklessness', 'relation', 'use']
+  },
+  {
+    title: 'Section 2 Threats to Destroy or Damage Property',
+    content: 'A person who without lawful excuse makes to another a threat, intending that the other would fear it would be carried out: (a) To destroy or damage any property belonging to that other or a third person (b) To destroy or damage their own property in a way which they know is likely to endanger the life of that other or a third person',
+    keywords: ['without', 'lawful', 'excuse', 'makes', 'another', 'threat', 'intending', 'fear', 'carried', 'destroy', 'damage', 'property', 'belonging', 'third', 'person', 'own', 'know', 'likely', 'endanger', 'life']
+  },
+  {
+    title: 'Section 3 Possessing an article with intent to cause Criminal Damage',
+    content: 'A person who has an article in their custody or under their control intending without lawful excuse, to use it or cause or permit another to use it (a) To destroy or damage any property belonging to another person (b) To destroy or damage their own or the user\'s property in a way which they know is likely to endanger the life of some other person',
+    keywords: ['person', 'article', 'custody', 'control', 'intending', 'without', 'lawful', 'excuse', 'use', 'cause', 'permit', 'another', 'destroy', 'damage', 'property', 'belonging', 'own', 'user', 'know', 'likely', 'endanger', 'life', 'some']
   }
 ];
 
 // Offences Against the Persons Act 1861 Sections
 export const offencesAgainstPersonsActSections = [
   {
-    title: 'Section 24 Offences Against the Persons Act 1861',
-    content: 'Whosoever shall unlawfully & maliciously administer to or cause to be administered to or taken by any other person any poison or other destructive or noxious thing, with intent to injure, aggrieve, or annoy such person, shall be guilty of an offence',
+    title: 'Section 24 Offences Against the Persons Act 1861 (Basically spiking)',
+    content: 'Whosoever shall unlawfully & maliciously administer to or cause to be administered to, or taken by any other person, any poison or other destructive or noxious thing, with intent to injure, aggrieve, or annoy such person, shall be guilty of an offence',
     keywords: ['Whosoever', 'shall', 'unlawfully', 'maliciously', 'administer', 'cause', 'administered', 'taken', 'other', 'person', 'poison', 'destructive', 'noxious', 'thing', 'intent', 'injure', 'aggrieve', 'annoy', 'such', 'guilty', 'offence']
   },
   {
     title: 'Section 47 Offences Against the Persons Act 1861 [ABH]',
-    content: 'A person is guilty of an offence if he intentionally or recklessly uses unlawful force on another, thereby occasioning actual bodily harm',
-    keywords: ['person', 'guilty', 'offence', 'intentionally', 'recklessly', 'uses', 'unlawful', 'force', 'another', 'thereby', 'occasioning', 'actual', 'bodily', 'harm']
+    content: 'A person is guilty of an offence if they intentionally or recklessly uses unlawful force on another, thereby occasioning them actual bodily harm. Any hurt or injury calculated to interfere with a person\'s health or comfort & includes physical harm or shock & mental injury',
+    keywords: ['person', 'guilty', 'offence', 'intentionally', 'recklessly', 'uses', 'unlawful', 'force', 'another', 'thereby', 'occasioning', 'actual', 'bodily', 'harm', 'hurt', 'injury', 'calculated', 'interfere', 'health', 'comfort', 'includes', 'physical', 'shock', 'mental']
+  },
+  {
+    title: 'Section 20 Offences Against the Person Act 1861 [GBH]',
+    content: 'Whomever shall unlawfully & maliciously wound or inflict any grievous bodily harm upon any other person. Either with or without any weapon or instrument shall be guilty of an offence',
+    keywords: ['Whomever', 'shall', 'unlawfully', 'maliciously', 'wound', 'inflict', 'grievous', 'bodily', 'harm', 'upon', 'other', 'person', 'either', 'without', 'weapon', 'instrument', 'guilty', 'offence']
+  },
+  {
+    title: 'Section 18 Offences Against the Person Act 1861 [GBH with intent]',
+    content: 'Whomoever shall unlawfully & maliciously by any means whatsoever wound or cause any grievous bodily harm to any person, with INTENT to do some grievous bodily harm to any person, OR with intent to resist or prevent the lawful apprehension or detainer of any person shall be guilty of an offence',
+    keywords: ['Whomoever', 'shall', 'unlawfully', 'maliciously', 'means', 'whatsoever', 'wound', 'cause', 'grievous', 'bodily', 'harm', 'person', 'INTENT', 'some', 'intent', 'resist', 'prevent', 'lawful', 'apprehension', 'detainer', 'guilty', 'offence']
   },
   {
     title: 'Section 38 Offences Against the Persons Act 1861 [Assault with Intent to Resist Arrest]',
@@ -101,17 +121,49 @@ export const offencesAgainstPersonsActSections = [
   }
 ];
 
+// Criminal Justice Act 1988 Sections
+export const criminalJusticeActSections = [
+  {
+    title: 'Section 39 Criminal Justice Act 1988 (Common Assault/Battery)',
+    content: 'Common Assault: Any act which a person intentionally or recklessly causes another person to apprehend immediate and unlawful personal violence. Battery: A person is guilty of battery if they intentionally or recklessly apply unlawful force on another person',
+    keywords: ['Common', 'Assault', 'act', 'person', 'intentionally', 'recklessly', 'causes', 'another', 'apprehend', 'immediate', 'unlawful', 'personal', 'violence', 'Battery', 'guilty', 'battery', 'apply', 'force']
+  }
+];
+
+// Emergency Workers (Obstruction) Act 2006 Sections
+export const emergencyWorkersActSections = [
+  {
+    title: 'S1 Emergency Workers (Obstruction Act 2006) - Obstructing emergency workers',
+    content: 'Obstruction or hindering emergency workers responding to an emergency: A person who without reasonable excuse obstructs or hinders an emergency worker, responding to emergency circumstance, commits an offence',
+    keywords: ['Obstruction', 'hindering', 'emergency', 'workers', 'responding', 'person', 'without', 'reasonable', 'excuse', 'obstructs', 'hinders', 'worker', 'circumstance', 'commits', 'offence']
+  },
+  {
+    title: 'S2 Emergency Workers (Obstruction Act 2006) - Obstructing person assisting emergency workers',
+    content: 'A person who without reasonable excuse obstructs or hinders another in assisting an emergency worker',
+    keywords: ['person', 'without', 'reasonable', 'excuse', 'obstructs', 'hinders', 'another', 'assisting', 'emergency', 'worker']
+  }
+];
+
 // Police Act 1996 Sections
 export const policeActSections = [
   {
     title: 'Section 89(1) Assault Police Police Act 1996',
-    content: 'It is an offence for any person to assault or resist a police officer or any person assisting the officer in the lawful execution of his duty',
-    keywords: ['offence', 'any', 'person', 'assault', 'resist', 'police', 'officer', 'assisting', 'lawful', 'execution', 'duty']
+    content: 'It is an offence for any person to assault or resist a police officer or any person assisting the officer in their lawful execution of their duty',
+    keywords: ['offence', 'any', 'person', 'assault', 'resist', 'police', 'officer', 'assisting', 'their', 'lawful', 'execution', 'duty']
   },
   {
     title: 'Section 89(2) Obstruct Police Police Act 1996',
-    content: 'It is an offence for any person to wilfully obstruct a police officer or any person assisting the officer in the lawful execution of his duty',
-    keywords: ['offence', 'any', 'person', 'wilfully', 'obstruct', 'police', 'officer', 'assisting', 'lawful', 'execution', 'duty']
+    content: 'It is an offence for any person to wilfully obstruct a police officer or any person assisting the officer in the lawful execution of their duty',
+    keywords: ['offence', 'any', 'person', 'wilfully', 'obstruct', 'police', 'officer', 'assisting', 'lawful', 'execution', 'their', 'duty']
+  }
+];
+
+// Public Order Act 1986 Sections
+export const publicOrderActSections = [
+  {
+    title: 'S1 Riot Public Order Act 1986',
+    content: 'Where 12 or more persons who are present together use or threatens unlawful violence for a common purpose and the conduct of them (taken together) is such as would cause a person of reasonable firmness present at the scene to fear for his personal safety, each of the persons using unlawful violence for the common purpose is guilty of riot',
+    keywords: ['Where', 'more', 'persons', 'present', 'together', 'use', 'threatens', 'unlawful', 'violence', 'common', 'purpose', 'conduct', 'taken', 'such', 'would', 'cause', 'person', 'reasonable', 'firmness', 'scene', 'fear', 'personal', 'safety', 'each', 'using', 'guilty', 'riot']
   }
 ];
 
@@ -120,7 +172,10 @@ export const allSections = [
   ...theftActSections,
   ...criminalDamageActSections,
   ...offencesAgainstPersonsActSections,
-  ...policeActSections
+  ...criminalJusticeActSections,
+  ...emergencyWorkersActSections,
+  ...policeActSections,
+  ...publicOrderActSections
 ];
 
 // Filler words to exclude from being keywords
@@ -175,7 +230,15 @@ const incorrectOptionsPool: string[] = [
   'bodily', 'physical', 'corporeal', 'tangible', 'material',
   'harm', 'injury', 'hurt', 'damage', 'wound',
   'GBH', 'ABH', 'injury', 'harm', 'hurt',
-  'WIFE', 'PACE', 'TWOC', 'INTENT', 'fear'
+  'WIFE', 'PACE', 'TWOC', 'INTENT', 'fear',
+  'emergency', 'worker', 'responding', 'circumstance', 'obstructs',
+  'hinders', 'reasonable', 'excuse', 'violence', 'riot',
+  'threatens', 'common', 'purpose', 'firmness', 'safety',
+  'apprehend', 'immediate', 'personal', 'battery', 'calculated',
+  'interfere', 'comfort', 'shock', 'mental', 'grievous',
+  'wound', 'inflict', 'whatsoever', 'detainer', 'endanger',
+  'custody', 'control', 'permit', 'article', 'noxious',
+  'destructive', 'aggrieve', 'annoy', 'spiking'
 ];
 
 // Function to check if a word is a filler word
