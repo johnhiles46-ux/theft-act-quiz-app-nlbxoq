@@ -18,38 +18,38 @@ export interface BlankItem {
 export const theftActSections = [
   {
     title: 'Section 1 Theft',
-    content: 'A person is guilty of an offence if they dishonestly appropriates property belonging to another with the intention of permanently depriving the other of it',
+    content: 'A person is guilty of theft if they dishonestly appropriates property belonging to another with the intention of permanently depriving the other of it',
     keywords: ['dishonestly', 'appropriates', 'property', 'belonging', 'another', 'intention', 'permanently', 'depriving']
   },
   {
     title: 'Section 8 Robbery',
-    content: 'A person is guilty of an offence if he steals and immediately before doing so or at the time of doing so, and in order to do so he uses force on any person or puts or seeks to put any person in fear of being then and there subjected to force',
-    keywords: ['steals', 'immediately', 'before', 'time', 'force', 'person', 'fear', 'subjected']
+    content: 'A person commits robbery if they steal and immediately before doing so OR at the time of doing so and in order to do so uses force on any person or puts or seeks to put any person in fear of being then and there subjected to force',
+    keywords: ['commits', 'robbery', 'steal', 'immediately', 'before', 'time', 'order', 'uses', 'force', 'person', 'puts', 'seeks', 'fear', 'subjected']
   },
   {
     title: 'Section 9 (1) (a) Burglary',
-    content: 'A person is guilty of an offence if they enter a building as a trespasser with the INTENT to steal anything therein, inflict GBH on any person therein and damage property therein',
-    keywords: ['enter', 'building', 'trespasser', 'INTENT', 'steal', 'inflict', 'GBH', 'damage', 'property']
+    content: 'A person is guilty of burglary if they enter a building or part of a building as a trespasser with the intent to steal anything therein, inflict GBH on any person therein, or damage property therein',
+    keywords: ['guilty', 'burglary', 'enter', 'building', 'part', 'trespasser', 'intent', 'steal', 'anything', 'therein', 'inflict', 'GBH', 'person', 'damage', 'property']
   },
   {
     title: 'Section 9 (1) (b) Burglary',
-    content: 'A person is guilty of an offence if they enter a building as a trespasser and goes on to steal or attempt to steal anything, inflict GBH on any person therein',
-    keywords: ['enter', 'building', 'trespasser', 'goes', 'steal', 'attempt', 'inflict', 'GBH', 'person']
+    content: 'A person is guilty of burglary if having entered any building or part of a building as a trespasser they then steal or attempt to steal anything therein',
+    keywords: ['guilty', 'burglary', 'having', 'entered', 'building', 'part', 'trespasser', 'then', 'steal', 'attempt', 'anything', 'therein']
   },
   {
     title: 'Section 10 Aggravated Burglary',
-    content: 'A person is guilty of an offence if they commit any burglary and at the time, has with him any weapon of offence or imitation firearm or any explosive. Mnemonic WIFE Weapon of Offence Imitation Firearm Firearm Explosive',
-    keywords: ['commit', 'burglary', 'time', 'weapon', 'offence', 'imitation', 'firearm', 'explosive', 'WIFE']
+    content: 'A person is guilty of aggravated burglary if they commit any burglary and at the time has with them weapon of offence, imitation firearm, firearm, or explosive',
+    keywords: ['guilty', 'aggravated', 'burglary', 'commit', 'time', 'has', 'with', 'them', 'weapon', 'offence', 'imitation', 'firearm', 'explosive']
   },
   {
     title: 'Section 12 TWOC',
-    content: 'A person is guilty of an offence if without the consent of the owner or other lawful authority he takes any conveyance for his own or another\'s use or knowing that any conveyance has been taken without such authority he drives it or allows himself to be carried in or on it',
-    keywords: ['without', 'consent', 'owner', 'lawful', 'authority', 'takes', 'conveyance', 'knowing', 'drives', 'carried']
+    content: 'A person shall be guilty of the offence if without the consent of the owner or other lawful authority they take any conveyance for their or another\'s use OR knowing that any conveyance has been taken without such authority they drive it or allow themselves to be carried in or on it',
+    keywords: ['guilty', 'offence', 'without', 'consent', 'owner', 'lawful', 'authority', 'take', 'conveyance', 'their', 'another', 'use', 'knowing', 'taken', 'such', 'drive', 'allow', 'themselves', 'carried']
   },
   {
     title: 'Section 12(1) Aggravated TWOC',
-    content: 'A person is guilty of an offence if commits an offence under Section 12(1) of the Theft Act 1968 in relation to a mechanically propelled vehicle and it is proved that, at any time after the vehicle was unlawfully taken (whether by him or another) before it was recovered, that the vehicle was driven dangerously on a road or other public place, owning to the driving of the vehicle, an accident occurred by which injury was caused to any person, owning to the driving of the vehicle, an accident occurred by which damage was cause to any property, other than the vehicle and that damage was caused to the vehicle',
-    keywords: ['commits', 'offence', 'mechanically', 'propelled', 'vehicle', 'unlawfully', 'taken', 'recovered', 'driven', 'dangerously', 'road', 'public', 'accident', 'injury', 'damage', 'property']
+    content: 'A person is guilty of aggravated taking of a vehicle if they commit an offence under section 12(1) in relation to an MPV and it is proved that, at any time after the vehicle was unlawfully taken (whether by them or another) and before it was recovered, that vehicle was driven dangerously on a road or other public place',
+    keywords: ['guilty', 'aggravated', 'taking', 'vehicle', 'commit', 'offence', 'section', 'relation', 'MPV', 'proved', 'time', 'after', 'unlawfully', 'taken', 'whether', 'them', 'another', 'before', 'recovered', 'driven', 'dangerously', 'road', 'public', 'place']
   },
   {
     title: 'Section 12(5) Taking a Pedal Cycle',
@@ -63,8 +63,8 @@ export const theftActSections = [
   },
   {
     title: 'Section 22 Handling Stolen Goods',
-    content: 'A person is guilty of an offence if otherwise than in the course of stealing, knowing or believing them to be stolen goods, dishonestly receives the goods or dishonestly undertakes or assists in their retention, removal, disposal, or realisation, by or for the benefit of another, or arranges to do any of the above',
-    keywords: ['otherwise', 'course', 'stealing', 'knowing', 'believing', 'stolen', 'goods', 'dishonestly', 'receives', 'undertakes', 'assists', 'retention', 'removal', 'disposal', 'realisation', 'benefit', 'another', 'arranges']
+    content: 'A person is guilty of an offence if otherwise than in the course of the stealing knowing or believing them to be stolen goods, dishonestly receives the goods or dishonestly undertakes or assists in their retention, removal, disposal, or realisation, by or for the benefit of another, or arranges to do any of the above',
+    keywords: ['guilty', 'offence', 'otherwise', 'course', 'stealing', 'knowing', 'believing', 'stolen', 'goods', 'dishonestly', 'receives', 'undertakes', 'assists', 'retention', 'removal', 'disposal', 'realisation', 'benefit', 'another', 'arranges']
   },
   {
     title: 'Section 25 Going Equipped',
@@ -266,7 +266,12 @@ const incorrectOptionsPool: string[] = [
   'destructive', 'aggrieve', 'annoy', 'spiking', 'preparatory',
   'commission', 'attempting', 'interference', 'Interfere', 'motor',
   'trailer', 'MV', 'pedal', 'cycle', 'abode', 'equipped',
-  'diverted', 'wasted', 'retention', 'realisation', 'arranges'
+  'diverted', 'wasted', 'retention', 'realisation', 'arranges',
+  'commits', 'robbery', 'immediately', 'order', 'puts', 'seeks',
+  'subjected', 'having', 'entered', 'part', 'aggravated', 'imitation',
+  'conveyance', 'allow', 'themselves', 'carried', 'drive', 'proved',
+  'relation', 'MPV', 'unlawfully', 'recovered', 'driven', 'dangerously',
+  'public', 'place', 'road'
 ];
 
 // Function to check if a word is a filler word
