@@ -18,57 +18,57 @@ export interface BlankItem {
 export const theftActSections = [
   {
     title: 'Section 1 Theft',
-    content: 'A person is guilty of theft if they dishonestly appropriates property belonging to another, with the intention of permanently depriving the other of it.',
+    content: 'A person is guilty of theft, if they dishonestly appropriates property, belonging to another, with the intention of permanently depriving the other of it.',
     keywords: ['dishonestly', 'appropriates', 'property', 'belonging', 'another', 'intention', 'permanently', 'depriving']
   },
   {
     title: 'Section 8 Robbery',
-    content: 'A person commits robbery if they steal, and immediately before doing so, or at the time of doing so, and in order to do so, uses force on any person, or puts, or seeks to put, any person in fear of being then and there subjected to force.',
+    content: 'A person commits robbery, if they steal, and immediately before doing so, or at the time of doing so, and in order to do so, uses force on any person, or puts, or seeks to put, any person in fear of being then and there subjected to force.',
     keywords: ['commits', 'robbery', 'steal', 'immediately', 'before', 'time', 'order', 'uses', 'force', 'person', 'puts', 'seeks', 'fear', 'subjected']
   },
   {
     title: 'Section 9 (1) (a) Burglary',
-    content: 'A person is guilty of burglary if they enter a building, or part of a building, as a trespasser, with the intent to steal anything therein, inflict GBH on any person therein, or damage property therein.',
+    content: 'A person is guilty of burglary, if they enter a building, or part of a building, as a trespasser, with the intent to steal anything therein, inflict G B H on any person therein, or damage property therein.',
     keywords: ['guilty', 'burglary', 'enter', 'building', 'part', 'trespasser', 'intent', 'steal', 'anything', 'therein', 'inflict', 'GBH', 'person', 'damage', 'property']
   },
   {
     title: 'Section 9 (1) (b) Burglary',
-    content: 'A person is guilty of burglary if, having entered any building, or part of a building, as a trespasser, they then steal, or attempt to steal, anything therein.',
+    content: 'A person is guilty of burglary, if, having entered any building, or part of a building, as a trespasser, they then steal, or attempt to steal, anything therein.',
     keywords: ['guilty', 'burglary', 'having', 'entered', 'building', 'part', 'trespasser', 'then', 'steal', 'attempt', 'anything', 'therein']
   },
   {
     title: 'Section 10 Aggravated Burglary',
-    content: 'A person is guilty of aggravated burglary if they commit any burglary, and at the time has with them a weapon of offence, imitation firearm, firearm, or explosive.',
+    content: 'A person is guilty of aggravated burglary, if they commit any burglary, and at the time has with them a weapon of offence, imitation firearm, firearm, or explosive.',
     keywords: ['guilty', 'aggravated', 'burglary', 'commit', 'time', 'has', 'with', 'them', 'weapon', 'offence', 'imitation', 'firearm', 'explosive']
   },
   {
     title: 'Section 12 TWOC',
-    content: 'A person shall be guilty of the offence if, without the consent of the owner or other lawful authority, they take any conveyance for their, or another\'s use; or, knowing that any conveyance has been taken without such authority, they drive it, or allow themselves to be carried in, or on it.',
+    content: 'A person shall be guilty of the offence, if, without the consent of the owner or other lawful authority, they take any conveyance for their, or another\'s use; or, knowing that any conveyance has been taken without such authority, they drive it, or allow themselves to be carried in, or on it.',
     keywords: ['guilty', 'offence', 'without', 'consent', 'owner', 'lawful', 'authority', 'take', 'conveyance', 'their', 'another', 'use', 'knowing', 'taken', 'such', 'drive', 'allow', 'themselves', 'carried']
   },
   {
     title: 'Section 12(1) Aggravated TWOC',
-    content: 'A person is guilty of aggravated taking of a vehicle if they commit an offence under section 12(1) in relation to an MPV, and it is proved that, at any time after the vehicle was unlawfully taken, whether by them or another, and before it was recovered, that vehicle was driven dangerously on a road, or other public place.',
+    content: 'A person is guilty of aggravated taking of a vehicle, if they commit an offence under section 12(1), in relation to an M P V, and it is proved that, at any time after the vehicle was unlawfully taken, whether by them or another, and before it was recovered, that vehicle was driven dangerously on a road, or other public place.',
     keywords: ['guilty', 'aggravated', 'taking', 'vehicle', 'commit', 'offence', 'section', 'relation', 'MPV', 'proved', 'time', 'after', 'unlawfully', 'taken', 'whether', 'them', 'another', 'before', 'recovered', 'driven', 'dangerously', 'road', 'public', 'place']
   },
   {
     title: 'Section 12(5) Taking a Pedal Cycle',
-    content: 'A person shall be guilty of the offence if, without the consent of the owner or other lawful authority, they take a pedal cycle for their own, or anothers use; or rides a pedal cycle, knowing it to have been taken without such authority.',
+    content: 'A person shall be guilty of the offence, if, without the consent of the owner or other lawful authority, they take a pedal cycle for their own, or anothers use; or rides a pedal cycle, knowing it to have been taken without such authority.',
     keywords: ['guilty', 'offence', 'without', 'consent', 'owner', 'lawful', 'authority', 'take', 'pedal', 'cycle', 'their', 'own', 'anothers', 'use', 'rides', 'knowing', 'taken', 'such']
   },
   {
     title: 'Section 13 Abstracting Electricity',
-    content: 'A person is guilty of an offence if he or she dishonestly uses it without due authority, or dishonestly causes it to be diverted, or wasted.',
+    content: 'A person is guilty of an offence, if he or she dishonestly uses it without due authority, or dishonestly causes it to be diverted, or wasted.',
     keywords: ['dishonestly', 'uses', 'without', 'due', 'authority', 'causes', 'diverted', 'wasted']
   },
   {
     title: 'Section 22 Handling Stolen Goods',
-    content: 'A person is guilty of an offence if, otherwise than in the course of the stealing, knowing or believing them to be stolen goods, dishonestly receives the goods, or dishonestly undertakes, or assists in their retention, removal, disposal, or realisation, by or for the benefit of another, or arranges to do any of the above.',
+    content: 'A person is guilty of an offence, if, otherwise than in the course of the stealing, knowing or believing them to be stolen goods, dishonestly receives the goods, or dishonestly undertakes, or assists in their retention, removal, disposal, or realisation, by or for the benefit of another, or arranges to do any of the above.',
     keywords: ['guilty', 'offence', 'otherwise', 'course', 'stealing', 'knowing', 'believing', 'stolen', 'goods', 'dishonestly', 'receives', 'undertakes', 'assists', 'retention', 'removal', 'disposal', 'realisation', 'benefit', 'another', 'arranges']
   },
   {
     title: 'Section 25 Going Equipped',
-    content: 'A person shall be guilty of an offence if, when not at their place of abode, they have with them any article for use in the course of, or in connection with, any burglary or theft.',
+    content: 'A person shall be guilty of an offence, if, when not at their place of abode, they have with them any article for use in the course of, or in connection with, any burglary or theft.',
     keywords: ['guilty', 'offence', 'when', 'not', 'their', 'place', 'abode', 'have', 'with', 'them', 'any', 'article', 'use', 'course', 'connection', 'burglary', 'theft']
   }
 ];
@@ -111,7 +111,7 @@ export const criminalAttemptsActSections = [
   },
   {
     title: 'S9 Vehicle Interference',
-    content: 'A person is guilty of vehicle interference if they: Interfere with a motor vehicle or trailer, or with anything carried in or on a MV or trailer, with the intention that one of the following offences shall be committed by themselves or another person: (a) Theft of a MV or trailer, or part of it; (b) Theft of anything carried in or on the MV or trailer; (c) An offence under S12 (1) of the theft act, TWOC.',
+    content: 'A person is guilty of vehicle interference, if they: Interfere with a motor vehicle or trailer, or with anything carried in or on a M V or trailer, with the intention that one of the following offences shall be committed by themselves or another person: (a) Theft of a M V or trailer, or part of it; (b) Theft of anything carried in or on the M V or trailer; (c) An offence under S12 (1) of the theft act, T W O C.',
     keywords: ['guilty', 'vehicle', 'interference', 'Interfere', 'motor', 'trailer', 'anything', 'carried', 'MV', 'intention', 'following', 'offences', 'committed', 'themselves', 'another', 'person', 'Theft', 'part', 'S12', 'theft', 'act', 'TWOC']
   }
 ];
@@ -125,7 +125,7 @@ export const offencesAgainstPersonsActSections = [
   },
   {
     title: 'Section 47 Offences Against the Persons Act 1861 [ABH]',
-    content: 'A person is guilty of an offence if they intentionally or recklessly uses unlawful force on another, thereby occasioning them actual bodily harm. Any hurt or injury calculated to interfere with a person\'s health or comfort, and includes physical harm, or shock, and mental injury.',
+    content: 'A person is guilty of an offence, if they intentionally or recklessly uses unlawful force on another, thereby occasioning them actual bodily harm. Any hurt or injury calculated to interfere with a person\'s health or comfort, and includes physical harm, or shock, and mental injury.',
     keywords: ['person', 'guilty', 'offence', 'intentionally', 'recklessly', 'uses', 'unlawful', 'force', 'another', 'thereby', 'occasioning', 'actual', 'bodily', 'harm', 'hurt', 'injury', 'calculated', 'interfere', 'health', 'comfort', 'includes', 'physical', 'shock', 'mental']
   },
   {
@@ -140,7 +140,7 @@ export const offencesAgainstPersonsActSections = [
   },
   {
     title: 'Section 38 Offences Against the Persons Act 1861 [Assault with Intent to Resist Arrest]',
-    content: 'It is an offence to assault any person with intent to resist or prevent the lawful apprehension or detainer of himself, or of any other person.',
+    content: 'It is an offence to assault any person, with intent to resist or prevent the lawful apprehension or detainer of himself, or of any other person.',
     keywords: ['offence', 'assault', 'any', 'person', 'with', 'intent', 'resist', 'prevent', 'lawful', 'apprehension', 'detainer', 'himself', 'other']
   }
 ];
@@ -149,7 +149,7 @@ export const offencesAgainstPersonsActSections = [
 export const criminalJusticeActSections = [
   {
     title: 'Section 39 Criminal Justice Act 1988 (Common Assault/Battery)',
-    content: 'Common Assault: Any act which a person intentionally or recklessly causes another person to apprehend immediate and unlawful personal violence. Battery: A person is guilty of battery if they intentionally or recklessly apply unlawful force on another person.',
+    content: 'Common Assault: Any act which a person intentionally or recklessly causes another person to apprehend immediate and unlawful personal violence. Battery: A person is guilty of battery, if they intentionally or recklessly apply unlawful force on another person.',
     keywords: ['Common', 'Assault', 'act', 'person', 'intentionally', 'recklessly', 'causes', 'another', 'apprehend', 'immediate', 'unlawful', 'personal', 'violence', 'Battery', 'guilty', 'battery', 'apply', 'force']
   }
 ];
@@ -201,7 +201,7 @@ export const publicOrderActSections = [
   },
   {
     title: 'S4b Protection from harassment in public Public Order Act 1986',
-    content: 'A person (A) is guilty of an offence under this section if: (a) A commits an offence under S4a; and (b) A carried out the conduct referred to in S4a (1) because of the relevant person\'s sex, or presumed sex.',
+    content: 'A person (A) is guilty of an offence under this section, if: (a) A commits an offence under S4a; and (b) A carried out the conduct referred to in S4a (1), because of the relevant person\'s sex, or presumed sex.',
     keywords: ['person', 'guilty', 'offence', 'section', 'commits', 'S4a', 'carried', 'conduct', 'referred', 'because', 'relevant', 'sex', 'presumed']
   },
   {
