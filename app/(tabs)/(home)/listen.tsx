@@ -62,6 +62,31 @@ export default function ListenScreen() {
     };
   }, []);
 
+  // Process text to add natural pauses for more human-like speech
+  const processTextForSpeech = (text: string): string => {
+    let processedText = text;
+    
+    // Add longer pauses after periods (full stops)
+    processedText = processedText.replace(/\.\s+/g, '. ... ');
+    
+    // Add medium pauses after semicolons
+    processedText = processedText.replace(/;\s+/g, '; .. ');
+    
+    // Add short pauses after commas
+    processedText = processedText.replace(/,\s+/g, ', . ');
+    
+    // Add pauses after colons
+    processedText = processedText.replace(/:\s+/g, ': .. ');
+    
+    // Add pauses after opening brackets/parentheses
+    processedText = processedText.replace(/\(\s*/g, '( . ');
+    
+    // Add pauses before closing brackets/parentheses
+    processedText = processedText.replace(/\s*\)/g, ' . )');
+    
+    return processedText;
+  };
+
   const handleCategorySelect = (categoryName: string) => {
     if (Platform.OS !== 'web') {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -96,12 +121,16 @@ export default function ListenScreen() {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       }
 
-      const textToSpeak = `${selectedSection.title}. ${selectedSection.content}`;
+      // Process the text to add natural pauses
+      const processedContent = processTextForSpeech(selectedSection.content);
+      const textToSpeak = `${selectedSection.title}. ... ... ${processedContent}`;
+
+      console.log('Starting speech with enhanced natural pauses');
 
       Speech.speak(textToSpeak, {
         language: 'en-GB',
-        pitch: 1.0,
-        rate: 0.85,
+        pitch: 0.95, // Slightly lower pitch for more natural sound
+        rate: 0.75, // Slower rate for better comprehension and natural flow
         onStart: () => {
           setIsSpeaking(true);
           setIsPaused(false);
@@ -193,7 +222,7 @@ export default function ListenScreen() {
               <Text style={styles.infoTitle}>Audio Legislation Player</Text>
             </View>
             <Text style={styles.infoText}>
-              Select any legislation section to listen to the full text read aloud. 
+              Select any legislation section to listen to the full text read aloud with natural pauses. 
               Perfect for learning definitions while on the go!
             </Text>
           </View>
@@ -289,6 +318,19 @@ export default function ListenScreen() {
                       {selectedSection.content}
                     </Text>
                   </ScrollView>
+                </View>
+
+                {/* Speech Info Banner */}
+                <View style={styles.speechInfoBanner}>
+                  <IconSymbol
+                    name="info.circle.fill"
+                    size={16}
+                    color={colors.primary}
+                    style={styles.speechInfoIcon}
+                  />
+                  <Text style={styles.speechInfoText}>
+                    Enhanced with natural pauses for better listening
+                  </Text>
                 </View>
 
                 {/* Playback Controls */}
@@ -527,7 +569,7 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   playerContent: {
-    marginBottom: 20,
+    marginBottom: 16,
   },
   playerSectionTitle: {
     fontSize: 18,
@@ -542,6 +584,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 26,
     color: colors.text,
+  },
+  speechInfoBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.highlight,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+  },
+  speechInfoIcon: {
+    marginRight: 8,
+  },
+  speechInfoText: {
+    fontSize: 13,
+    color: colors.primary,
+    fontWeight: '500',
+    flex: 1,
   },
   controlsContainer: {
     flexDirection: 'row',
