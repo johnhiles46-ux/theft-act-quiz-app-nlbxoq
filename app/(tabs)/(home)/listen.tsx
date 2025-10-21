@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Platform,
+  Alert,
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { IconSymbol } from '@/components/IconSymbol';
@@ -42,6 +43,8 @@ export default function ListenScreen() {
   const [selectedSection, setSelectedSection] = useState<LegislationSection | null>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [availableVoices, setAvailableVoices] = useState<any[]>([]);
+  const [selectedVoice, setSelectedVoice] = useState<string | null>(null);
 
   const categories: LegislationCategory[] = [
     { name: 'Theft Act 1968', sections: theftActSections },
@@ -56,11 +59,51 @@ export default function ListenScreen() {
   ];
 
   useEffect(() => {
+    // Load available voices and try to find a Welsh voice
+    loadVoices();
+    
     // Cleanup speech when component unmounts
     return () => {
       Speech.stop();
     };
   }, []);
+
+  const loadVoices = async () => {
+    try {
+      const voices = await Speech.getAvailableVoicesAsync();
+      setAvailableVoices(voices);
+      console.log('Available voices:', voices);
+      
+      // Try to find a Welsh voice
+      // Look for voices with Welsh language codes or Welsh in the name
+      const welshVoice = voices.find((voice: any) => 
+        voice.language?.toLowerCase().includes('cy') || 
+        voice.language?.toLowerCase().includes('welsh') ||
+        voice.identifier?.toLowerCase().includes('welsh') ||
+        voice.name?.toLowerCase().includes('welsh')
+      );
+      
+      if (welshVoice) {
+        setSelectedVoice(welshVoice.identifier);
+        console.log('Found Welsh voice:', welshVoice);
+      } else {
+        // Fallback: Try to find a British English voice that sounds softer
+        const britishVoice = voices.find((voice: any) => 
+          voice.language?.toLowerCase().includes('en-gb') ||
+          voice.language?.toLowerCase().includes('en_gb')
+        );
+        
+        if (britishVoice) {
+          setSelectedVoice(britishVoice.identifier);
+          console.log('Using British English voice as fallback:', britishVoice);
+        } else {
+          console.log('No Welsh or British voice found, using default');
+        }
+      }
+    } catch (error) {
+      console.error('Error loading voices:', error);
+    }
+  };
 
   // Process text to add natural pauses for more human-like speech
   const processTextForSpeech = (text: string): string => {
@@ -125,12 +168,14 @@ export default function ListenScreen() {
       const processedContent = processTextForSpeech(selectedSection.content);
       const textToSpeak = `${selectedSection.title}. ... ... ${processedContent}`;
 
-      console.log('Starting speech with enhanced natural pauses');
+      console.log('Starting speech with Welsh-inspired voice settings');
 
-      Speech.speak(textToSpeak, {
-        language: 'en-GB',
-        pitch: 0.95, // Slightly lower pitch for more natural sound
-        rate: 0.75, // Slower rate for better comprehension and natural flow
+      // Speech options optimized for a soft Welsh accent
+      const speechOptions: any = {
+        // Try Welsh language first, fallback to British English
+        language: 'en-GB', // Using British English as base
+        pitch: 1.05, // Slightly higher pitch for Welsh melodic quality
+        rate: 0.72, // Slower rate for the characteristic Welsh speaking rhythm
         onStart: () => {
           setIsSpeaking(true);
           setIsPaused(false);
@@ -146,12 +191,29 @@ export default function ListenScreen() {
           setIsPaused(false);
           console.log('Stopped speaking');
         },
-        onError: (error) => {
+        onError: (error: any) => {
           console.error('Speech error:', error);
           setIsSpeaking(false);
           setIsPaused(false);
         },
-      });
+      };
+
+      // If we found a specific voice, use it
+      if (selectedVoice) {
+        speechOptions.voice = selectedVoice;
+        console.log('Using voice:', selectedVoice);
+      }
+
+      try {
+        Speech.speak(textToSpeak, speechOptions);
+      } catch (error) {
+        console.error('Error starting speech:', error);
+        Alert.alert(
+          'Speech Error',
+          'Unable to start text-to-speech. Please try again.',
+          [{ text: 'OK' }]
+        );
+      }
     }
   };
 
@@ -222,7 +284,7 @@ export default function ListenScreen() {
               <Text style={styles.infoTitle}>Audio Legislation Player</Text>
             </View>
             <Text style={styles.infoText}>
-              Select any legislation section to listen to the full text read aloud with natural pauses. 
+              Select any legislation section to listen to the full text read aloud with a soft Welsh accent and natural pauses. 
               Perfect for learning definitions while on the go!
             </Text>
           </View>
@@ -329,7 +391,7 @@ export default function ListenScreen() {
                     style={styles.speechInfoIcon}
                   />
                   <Text style={styles.speechInfoText}>
-                    Enhanced with natural pauses for better listening
+                    Soft Welsh accent with natural pauses for better listening
                   </Text>
                 </View>
 
