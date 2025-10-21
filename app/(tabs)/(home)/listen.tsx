@@ -59,7 +59,7 @@ export default function ListenScreen() {
   ];
 
   useEffect(() => {
-    // Load available voices and try to find a Welsh voice
+    // Load available voices and try to find a soft female voice
     loadVoices();
     
     // Cleanup speech when component unmounts
@@ -74,20 +74,36 @@ export default function ListenScreen() {
       setAvailableVoices(voices);
       console.log('Available voices:', voices);
       
-      // Try to find a Welsh voice
-      // Look for voices with Welsh language codes or Welsh in the name
-      const welshVoice = voices.find((voice: any) => 
-        voice.language?.toLowerCase().includes('cy') || 
-        voice.language?.toLowerCase().includes('welsh') ||
-        voice.identifier?.toLowerCase().includes('welsh') ||
-        voice.name?.toLowerCase().includes('welsh')
-      );
+      // Try to find a female voice
+      // Look for voices with female indicators in the name or identifier
+      const femaleVoice = voices.find((voice: any) => {
+        const voiceString = `${voice.name} ${voice.identifier}`.toLowerCase();
+        return (
+          voiceString.includes('female') ||
+          voiceString.includes('woman') ||
+          voiceString.includes('samantha') ||
+          voiceString.includes('victoria') ||
+          voiceString.includes('karen') ||
+          voiceString.includes('kate') ||
+          voiceString.includes('serena') ||
+          voiceString.includes('fiona') ||
+          voiceString.includes('moira') ||
+          voiceString.includes('tessa') ||
+          voiceString.includes('veena') ||
+          voiceString.includes('zoe') ||
+          voiceString.includes('siri female') ||
+          voiceString.includes('allison') ||
+          voiceString.includes('ava') ||
+          voiceString.includes('susan') ||
+          voiceString.includes('martha')
+        );
+      });
       
-      if (welshVoice) {
-        setSelectedVoice(welshVoice.identifier);
-        console.log('Found Welsh voice:', welshVoice);
+      if (femaleVoice) {
+        setSelectedVoice(femaleVoice.identifier);
+        console.log('Found female voice:', femaleVoice);
       } else {
-        // Fallback: Try to find a British English voice that sounds softer
+        // Fallback: Try to find a British English voice (often softer)
         const britishVoice = voices.find((voice: any) => 
           voice.language?.toLowerCase().includes('en-gb') ||
           voice.language?.toLowerCase().includes('en_gb')
@@ -97,7 +113,7 @@ export default function ListenScreen() {
           setSelectedVoice(britishVoice.identifier);
           console.log('Using British English voice as fallback:', britishVoice);
         } else {
-          console.log('No Welsh or British voice found, using default');
+          console.log('No specific female voice found, using default with adjusted parameters');
         }
       }
     } catch (error) {
@@ -168,14 +184,14 @@ export default function ListenScreen() {
       const processedContent = processTextForSpeech(selectedSection.content);
       const textToSpeak = `${selectedSection.title}. ... ... ${processedContent}`;
 
-      console.log('Starting speech with Welsh-inspired voice settings');
+      console.log('Starting speech with soft female voice settings');
 
-      // Speech options optimized for a soft Welsh accent
+      // Speech options optimized for a soft, gentle female voice
       const speechOptions: any = {
-        // Try Welsh language first, fallback to British English
-        language: 'en-GB', // Using British English as base
-        pitch: 1.05, // Slightly higher pitch for Welsh melodic quality
-        rate: 0.72, // Slower rate for the characteristic Welsh speaking rhythm
+        // Use British English for a softer accent
+        language: 'en-GB',
+        pitch: 1.15, // Slightly higher pitch for a feminine, gentle tone
+        rate: 0.68, // Slower rate for a calm, soothing delivery
         onStart: () => {
           setIsSpeaking(true);
           setIsPaused(false);
@@ -198,7 +214,7 @@ export default function ListenScreen() {
         },
       };
 
-      // If we found a specific voice, use it
+      // If we found a specific female voice, use it
       if (selectedVoice) {
         speechOptions.voice = selectedVoice;
         console.log('Using voice:', selectedVoice);
@@ -284,7 +300,7 @@ export default function ListenScreen() {
               <Text style={styles.infoTitle}>Audio Legislation Player</Text>
             </View>
             <Text style={styles.infoText}>
-              Select any legislation section to listen to the full text read aloud with a soft Welsh accent and natural pauses. 
+              Select any legislation section to listen to the full text read aloud with a soft, gentle female voice and natural pauses. 
               Perfect for learning definitions while on the go!
             </Text>
           </View>
@@ -391,7 +407,7 @@ export default function ListenScreen() {
                     style={styles.speechInfoIcon}
                   />
                   <Text style={styles.speechInfoText}>
-                    Soft Welsh accent with natural pauses for better listening
+                    Soft, gentle female voice with natural pauses for better listening
                   </Text>
                 </View>
 
