@@ -190,7 +190,7 @@ export default function HomeScreen() {
                 <Text style={styles.statLabel}>Criminal Attempts Act 1981</Text>
               </View>
               <View style={styles.statItem}>
-                <Text style={styles.statNumber}>1</Text>
+                <Text style={styles.statNumber}>2</Text>
                 <Text style={styles.statLabel}>Criminal Justice Act 1988</Text>
               </View>
               <View style={styles.statItem}>
@@ -198,8 +198,16 @@ export default function HomeScreen() {
                 <Text style={styles.statLabel}>Emergency Workers Act 2006</Text>
               </View>
               <View style={styles.statItem}>
-                <Text style={styles.statNumber}>5</Text>
+                <Text style={styles.statNumber}>7</Text>
                 <Text style={styles.statLabel}>Public Order Act 1986</Text>
+              </View>
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>4</Text>
+                <Text style={styles.statLabel}>PACE 1984</Text>
+              </View>
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>1</Text>
+                <Text style={styles.statLabel}>Prevention of Crime Act 1953</Text>
               </View>
               <View style={styles.statItem}>
                 <Text style={styles.statNumber}>1</Text>
@@ -240,7 +248,7 @@ export default function HomeScreen() {
               <IconSymbol name="checkmark.circle.fill" size={20} color={colors.success} style={styles.checkIcon} />
               <View style={styles.legislationContent}>
                 <Text style={styles.legislationName}>Theft Act 1968</Text>
-                <Text style={styles.legislationDesc}>Theft, Robbery, Burglary, TWOC, Handling Stolen Goods</Text>
+                <Text style={styles.legislationDesc}>Theft, Robbery, Burglary, Aggravated Burglary, TWOC, Aggravated TWOC, Taking Pedal Cycle, Abstracting Electricity, Handling Stolen Goods, Going Equipped</Text>
               </View>
             </View>
 
@@ -248,15 +256,39 @@ export default function HomeScreen() {
               <IconSymbol name="checkmark.circle.fill" size={20} color={colors.success} style={styles.checkIcon} />
               <View style={styles.legislationContent}>
                 <Text style={styles.legislationName}>Criminal Damage Act 1971</Text>
-                <Text style={styles.legislationDesc}>Criminal Damage, Endangering Life, Arson</Text>
+                <Text style={styles.legislationDesc}>Criminal Damage, Criminal Damage Endangering Life, Arson, Threats to Destroy or Damage Property, Possessing Article with Intent</Text>
               </View>
             </View>
 
             <View style={styles.legislationItem}>
               <IconSymbol name="checkmark.circle.fill" size={20} color={colors.success} style={styles.checkIcon} />
               <View style={styles.legislationContent}>
-                <Text style={styles.legislationName}>Offences Against the Persons Act 1861</Text>
-                <Text style={styles.legislationDesc}>Assault, ABH, Poisoning, Assault with Intent</Text>
+                <Text style={styles.legislationName}>Offences Against the Person Act 1861</Text>
+                <Text style={styles.legislationDesc}>GBH with Intent, GBH, Administering Poison, Assault with Intent to Resist Arrest, ABH</Text>
+              </View>
+            </View>
+
+            <View style={styles.legislationItem}>
+              <IconSymbol name="checkmark.circle.fill" size={20} color={colors.success} style={styles.checkIcon} />
+              <View style={styles.legislationContent}>
+                <Text style={styles.legislationName}>Criminal Justice Act 1988</Text>
+                <Text style={styles.legislationDesc}>Common Assault and Battery, Bladed or Sharply Pointed Articles</Text>
+              </View>
+            </View>
+
+            <View style={styles.legislationItem}>
+              <IconSymbol name="checkmark.circle.fill" size={20} color={colors.success} style={styles.checkIcon} />
+              <View style={styles.legislationContent}>
+                <Text style={styles.legislationName}>Public Order Act 1986</Text>
+                <Text style={styles.legislationDesc}>Riot, Violent Disorder, Affray, Fear or Provocation of Violence, Intentional Harassment Alarm or Distress, Protection from Harassment in Public, Disorderly Conduct</Text>
+              </View>
+            </View>
+
+            <View style={styles.legislationItem}>
+              <IconSymbol name="checkmark.circle.fill" size={20} color={colors.success} style={styles.checkIcon} />
+              <View style={styles.legislationContent}>
+                <Text style={styles.legislationName}>PACE 1984</Text>
+                <Text style={styles.legislationDesc}>Powers of Arrest (Section 24(1) and 24(2)), Search upon Arrest, Enter and Search Premises</Text>
               </View>
             </View>
 
@@ -264,7 +296,7 @@ export default function HomeScreen() {
               <IconSymbol name="checkmark.circle.fill" size={20} color={colors.success} style={styles.checkIcon} />
               <View style={styles.legislationContent}>
                 <Text style={styles.legislationName}>Police Act 1996</Text>
-                <Text style={styles.legislationDesc}>Assault Police, Obstruct Police</Text>
+                <Text style={styles.legislationDesc}>Assault on Police, Obstruct Police</Text>
               </View>
             </View>
 
@@ -279,24 +311,16 @@ export default function HomeScreen() {
             <View style={styles.legislationItem}>
               <IconSymbol name="checkmark.circle.fill" size={20} color={colors.success} style={styles.checkIcon} />
               <View style={styles.legislationContent}>
-                <Text style={styles.legislationName}>Criminal Justice Act 1988</Text>
-                <Text style={styles.legislationDesc}>Common Assault, Battery</Text>
-              </View>
-            </View>
-
-            <View style={styles.legislationItem}>
-              <IconSymbol name="checkmark.circle.fill" size={20} color={colors.success} style={styles.checkIcon} />
-              <View style={styles.legislationContent}>
                 <Text style={styles.legislationName}>Emergency Workers Act 2006</Text>
-                <Text style={styles.legislationDesc}>Obstructing Emergency Workers</Text>
+                <Text style={styles.legislationDesc}>Obstructing Emergency Workers, Obstructing Person Assisting Emergency Workers</Text>
               </View>
             </View>
 
             <View style={styles.legislationItem}>
               <IconSymbol name="checkmark.circle.fill" size={20} color={colors.success} style={styles.checkIcon} />
               <View style={styles.legislationContent}>
-                <Text style={styles.legislationName}>Public Order Act 1986</Text>
-                <Text style={styles.legislationDesc}>Riot, Violent Disorder, Harassment, Disorderly Conduct</Text>
+                <Text style={styles.legislationName}>Prevention of Crime Act 1953</Text>
+                <Text style={styles.legislationDesc}>Offensive Weapon in Public</Text>
               </View>
             </View>
 
@@ -343,7 +367,7 @@ export default function HomeScreen() {
           {/* Footer Info */}
           <View style={styles.footerInfo}>
             <Text style={styles.footerText}>
-              Questions are randomly generated from 34 sections of UK legislation
+              Questions are randomly generated from 42 sections of UK legislation
             </Text>
           </View>
         </ScrollView>

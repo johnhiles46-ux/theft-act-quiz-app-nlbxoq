@@ -1,5 +1,22 @@
 
 import React, { useState, useEffect } from 'react';
+import * as Speech from 'expo-speech';
+import { IconSymbol } from '@/components/IconSymbol';
+import * as Haptics from 'expo-haptics';
+import {
+  theftActSections,
+  criminalDamageActSections,
+  criminalAttemptsActSections,
+  offencesAgainstPersonsActSections,
+  criminalJusticeActSections,
+  emergencyWorkersActSections,
+  policeActSections,
+  paceActSections,
+  preventionOfCrimeActSections,
+  publicOrderActSections,
+  commonLawOffences,
+} from '@/data/theftActData';
+import { colors, commonStyles, buttonStyles } from '@/styles/commonStyles';
 import {
   View,
   Text,
@@ -10,21 +27,6 @@ import {
   Alert,
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { IconSymbol } from '@/components/IconSymbol';
-import { colors, commonStyles, buttonStyles } from '@/styles/commonStyles';
-import * as Speech from 'expo-speech';
-import * as Haptics from 'expo-haptics';
-import {
-  theftActSections,
-  criminalDamageActSections,
-  criminalAttemptsActSections,
-  offencesAgainstPersonsActSections,
-  criminalJusticeActSections,
-  emergencyWorkersActSections,
-  policeActSections,
-  publicOrderActSections,
-  commonLawOffences,
-} from '@/data/theftActData';
 
 interface LegislationSection {
   title: string;
@@ -37,32 +39,238 @@ interface LegislationCategory {
   sections: LegislationSection[];
 }
 
+interface VoiceOption {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  pitch: number;
+  rate: number;
+  voiceIdentifier?: string;
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  scrollContent: {
+    padding: 20,
+    paddingBottom: 100,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: colors.text,
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    marginBottom: 30,
+  },
+  categoryCard: {
+    backgroundColor: colors.card,
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 16,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 4,
+      },
+      web: {
+        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+      },
+    }),
+  },
+  categoryTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 8,
+  },
+  categorySubtitle: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    marginBottom: 16,
+  },
+  sectionButton: {
+    backgroundColor: colors.primary + '15',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 10,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: colors.primary,
+  },
+  selectedSection: {
+    backgroundColor: colors.card,
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: colors.primary,
+  },
+  selectedSectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 12,
+  },
+  selectedSectionContent: {
+    fontSize: 15,
+    color: colors.text,
+    lineHeight: 24,
+    marginBottom: 20,
+  },
+  voiceSelectionContainer: {
+    marginBottom: 20,
+  },
+  voiceSelectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 12,
+  },
+  voiceOptionsContainer: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  voiceOption: {
+    flex: 1,
+    backgroundColor: colors.card,
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: colors.textSecondary + '30',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+      },
+      web: {
+        boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+      },
+    }),
+  },
+  voiceOptionSelected: {
+    borderColor: colors.primary,
+    backgroundColor: colors.primary + '10',
+  },
+  voiceOptionIcon: {
+    marginBottom: 8,
+  },
+  voiceOptionName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.text,
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  voiceOptionDescription: {
+    fontSize: 11,
+    color: colors.textSecondary,
+    textAlign: 'center',
+  },
+  controlsContainer: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  controlButton: {
+    flex: 1,
+    backgroundColor: colors.primary,
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 8,
+  },
+  controlButtonSecondary: {
+    backgroundColor: colors.textSecondary + '20',
+  },
+  controlButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  controlButtonTextSecondary: {
+    color: colors.text,
+  },
+  backButton: {
+    backgroundColor: colors.textSecondary + '20',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  backButtonText: {
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});
+
 export default function ListenScreen() {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedSection, setSelectedSection] = useState<LegislationSection | null>(null);
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-  const [availableVoices, setAvailableVoices] = useState<any[]>([]);
-  const [selectedVoice, setSelectedVoice] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [availableVoices, setAvailableVoices] = useState<Speech.Voice[]>([]);
+  const [selectedVoiceOption, setSelectedVoiceOption] = useState<string>('female');
 
   const categories: LegislationCategory[] = [
     { name: 'Theft Act 1968', sections: theftActSections },
     { name: 'Criminal Damage Act 1971', sections: criminalDamageActSections },
     { name: 'Criminal Attempts Act 1981', sections: criminalAttemptsActSections },
-    { name: 'Offences Against the Persons Act 1861', sections: offencesAgainstPersonsActSections },
+    { name: 'Offences Against the Person Act 1861', sections: offencesAgainstPersonsActSections },
     { name: 'Criminal Justice Act 1988', sections: criminalJusticeActSections },
-    { name: 'Emergency Workers (Obstruction) Act 2006', sections: emergencyWorkersActSections },
+    { name: 'Emergency Workers Act 2006', sections: emergencyWorkersActSections },
     { name: 'Police Act 1996', sections: policeActSections },
+    { name: 'PACE 1984', sections: paceActSections },
+    { name: 'Prevention of Crime Act 1953', sections: preventionOfCrimeActSections },
     { name: 'Public Order Act 1986', sections: publicOrderActSections },
     { name: 'Common Law Offences', sections: commonLawOffences },
   ];
 
+  const voiceOptions: VoiceOption[] = [
+    {
+      id: 'male',
+      name: 'Male',
+      description: 'Professional male voice',
+      icon: 'person.fill',
+      pitch: 0.9,
+      rate: 0.75,
+    },
+    {
+      id: 'female',
+      name: 'Female',
+      description: 'Clear female voice',
+      icon: 'person.fill',
+      pitch: 1.1,
+      rate: 0.75,
+    },
+  ];
+
   useEffect(() => {
-    // Load available voices and try to find a soft female voice
     loadVoices();
     
-    // Cleanup speech when component unmounts
     return () => {
       Speech.stop();
     };
@@ -71,692 +279,329 @@ export default function ListenScreen() {
   const loadVoices = async () => {
     try {
       const voices = await Speech.getAvailableVoicesAsync();
+      console.log('Available voices:', voices.length);
       setAvailableVoices(voices);
-      console.log('Available voices:', voices);
-      
-      // Try to find a female voice
-      // Look for voices with female indicators in the name or identifier
-      const femaleVoice = voices.find((voice: any) => {
-        const voiceString = `${voice.name} ${voice.identifier}`.toLowerCase();
-        return (
-          voiceString.includes('female') ||
-          voiceString.includes('woman') ||
-          voiceString.includes('samantha') ||
-          voiceString.includes('victoria') ||
-          voiceString.includes('karen') ||
-          voiceString.includes('kate') ||
-          voiceString.includes('serena') ||
-          voiceString.includes('fiona') ||
-          voiceString.includes('moira') ||
-          voiceString.includes('tessa') ||
-          voiceString.includes('veena') ||
-          voiceString.includes('zoe') ||
-          voiceString.includes('siri female') ||
-          voiceString.includes('allison') ||
-          voiceString.includes('ava') ||
-          voiceString.includes('susan') ||
-          voiceString.includes('martha')
-        );
-      });
-      
-      if (femaleVoice) {
-        setSelectedVoice(femaleVoice.identifier);
-        console.log('Found female voice:', femaleVoice);
-      } else {
-        // Fallback: Try to find a British English voice (often softer)
-        const britishVoice = voices.find((voice: any) => 
-          voice.language?.toLowerCase().includes('en-gb') ||
-          voice.language?.toLowerCase().includes('en_gb')
-        );
-        
-        if (britishVoice) {
-          setSelectedVoice(britishVoice.identifier);
-          console.log('Using British English voice as fallback:', britishVoice);
-        } else {
-          console.log('No specific female voice found, using default with adjusted parameters');
-        }
-      }
     } catch (error) {
       console.error('Error loading voices:', error);
     }
   };
 
-  // Process text to add natural pauses for more human-like speech
-  const processTextForSpeech = (text: string): string => {
-    let processedText = text;
+  const getVoiceForOption = (optionId: string): string | undefined => {
+    if (availableVoices.length === 0) return undefined;
+
+    let selectedVoice: Speech.Voice | undefined;
+
+    switch (optionId) {
+      case 'male':
+        // Try to find a male British English voice
+        selectedVoice = 
+          availableVoices.find(voice => 
+            voice.language.startsWith('en-GB') && 
+            (voice.name.toLowerCase().includes('male') || 
+             voice.name.toLowerCase().includes('daniel') ||
+             voice.name.toLowerCase().includes('oliver') ||
+             voice.name.toLowerCase().includes('arthur'))
+          ) ||
+          availableVoices.find(voice => 
+            voice.language.startsWith('en-') && 
+            (voice.name.toLowerCase().includes('male') ||
+             voice.name.toLowerCase().includes('aaron'))
+          ) ||
+          availableVoices.find(voice => voice.language.startsWith('en-GB')) ||
+          availableVoices.find(voice => voice.language.startsWith('en-'));
+        break;
+
+      case 'female':
+        // Try to find a female British English voice
+        selectedVoice = 
+          availableVoices.find(voice => 
+            voice.language.startsWith('en-GB') && 
+            (voice.name.toLowerCase().includes('female') || 
+             voice.name.toLowerCase().includes('kate') ||
+             voice.name.toLowerCase().includes('serena') ||
+             voice.name.toLowerCase().includes('martha'))
+          ) ||
+          availableVoices.find(voice => 
+            voice.language.startsWith('en-') && 
+            (voice.name.toLowerCase().includes('female') ||
+             voice.name.toLowerCase().includes('samantha'))
+          ) ||
+          availableVoices.find(voice => voice.language.startsWith('en-GB')) ||
+          availableVoices.find(voice => voice.language.startsWith('en-'));
+        break;
+
+      default:
+        selectedVoice = availableVoices.find(voice => voice.language.startsWith('en-'));
+    }
+
+    if (selectedVoice) {
+      console.log(`Selected ${optionId} voice:`, selectedVoice.name, selectedVoice.language);
+      return selectedVoice.identifier;
+    }
+
+    return undefined;
+  };
+
+  const processTextForSpeech = (text: string) => {
+    // Replace commas with a brief pause (using a single period for natural pause)
+    let processedText = text.replace(/,\s*/g, ', ');
     
-    // Add longer pauses after periods (full stops)
-    processedText = processedText.replace(/\.\s+/g, '. ... ');
+    // Add natural pauses using SSML-like markers that the speech engine understands
+    // Short pause after commas
+    processedText = processedText.replace(/,\s+/g, ',  ');
     
-    // Add medium pauses after semicolons
-    processedText = processedText.replace(/;\s+/g, '; .. ');
+    // Medium pause after semicolons
+    processedText = processedText.replace(/;\s+/g, ';   ');
     
-    // Add short pauses after commas
-    processedText = processedText.replace(/,\s+/g, ', . ');
+    // Longer pause after periods
+    processedText = processedText.replace(/\.\s+/g, '.    ');
     
-    // Add pauses after colons
-    processedText = processedText.replace(/:\s+/g, ': .. ');
+    // Medium pause after colons
+    processedText = processedText.replace(/:\s+/g, ':   ');
     
-    // Add pauses after opening brackets/parentheses
-    processedText = processedText.replace(/\(\s*/g, '( . ');
+    // Brief pause around parentheses
+    processedText = processedText.replace(/\(\s*/g, '  (');
+    processedText = processedText.replace(/\s*\)/g, ')  ');
     
-    // Add pauses before closing brackets/parentheses
-    processedText = processedText.replace(/\s*\)/g, ' . )');
+    // Add pauses around "or" for better clarity
+    processedText = processedText.replace(/\s+or\s+/g, '  or  ');
+    
+    // Ensure proper spacing
+    processedText = processedText.replace(/\s+/g, ' ').trim();
     
     return processedText;
   };
 
   const handleCategorySelect = (categoryName: string) => {
-    if (Platform.OS !== 'web') {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    }
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedCategory(categoryName);
     setSelectedSection(null);
-    stopSpeaking();
-    console.log('Selected category:', categoryName);
+    Speech.stop();
+    setIsPlaying(false);
   };
 
   const handleSectionSelect = (section: LegislationSection) => {
-    if (Platform.OS !== 'web') {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    }
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedSection(section);
-    stopSpeaking();
-    console.log('Selected section:', section.title);
+    Speech.stop();
+    setIsPlaying(false);
   };
 
-  const handlePlay = async () => {
-    if (!selectedSection) return;
-
-    if (isPaused) {
-      // Resume speaking
-      Speech.resume();
-      setIsPaused(false);
-      setIsSpeaking(true);
-      console.log('Resumed speaking');
-    } else {
-      // Start speaking
-      if (Platform.OS !== 'web') {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      }
-
-      // Process the text to add natural pauses
-      const processedContent = processTextForSpeech(selectedSection.content);
-      const textToSpeak = `${selectedSection.title}. ... ... ${processedContent}`;
-
-      console.log('Starting speech with soft female voice settings');
-
-      // Speech options optimized for a soft, gentle female voice
-      const speechOptions: any = {
-        // Use British English for a softer accent
-        language: 'en-GB',
-        pitch: 1.15, // Slightly higher pitch for a feminine, gentle tone
-        rate: 0.68, // Slower rate for a calm, soothing delivery
-        onStart: () => {
-          setIsSpeaking(true);
-          setIsPaused(false);
-          console.log('Started speaking');
-        },
-        onDone: () => {
-          setIsSpeaking(false);
-          setIsPaused(false);
-          console.log('Finished speaking');
-        },
-        onStopped: () => {
-          setIsSpeaking(false);
-          setIsPaused(false);
-          console.log('Stopped speaking');
-        },
-        onError: (error: any) => {
-          console.error('Speech error:', error);
-          setIsSpeaking(false);
-          setIsPaused(false);
-        },
-      };
-
-      // If we found a specific female voice, use it
-      if (selectedVoice) {
-        speechOptions.voice = selectedVoice;
-        console.log('Using voice:', selectedVoice);
-      }
-
-      try {
-        Speech.speak(textToSpeak, speechOptions);
-      } catch (error) {
-        console.error('Error starting speech:', error);
-        Alert.alert(
-          'Speech Error',
-          'Unable to start text-to-speech. Please try again.',
-          [{ text: 'OK' }]
-        );
-      }
+  const handleVoiceSelect = (voiceId: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setSelectedVoiceOption(voiceId);
+    
+    // Stop current playback if switching voices
+    if (isPlaying) {
+      Speech.stop();
+      setIsPlaying(false);
     }
+  };
+
+  const handlePlay = () => {
+    if (!selectedSection) return;
+    
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    
+    const text = `${selectedSection.title}.    ${selectedSection.content}`;
+    const processedText = processTextForSpeech(text);
+    
+    const voiceOption = voiceOptions.find(v => v.id === selectedVoiceOption);
+    const voiceIdentifier = getVoiceForOption(selectedVoiceOption);
+    
+    console.log('Speaking with voice option:', selectedVoiceOption);
+    console.log('Voice identifier:', voiceIdentifier);
+    console.log('Pitch:', voiceOption?.pitch, 'Rate:', voiceOption?.rate);
+    
+    Speech.speak(processedText, {
+      language: 'en-GB',
+      pitch: voiceOption?.pitch || 1.0,
+      rate: voiceOption?.rate || 0.75,
+      voice: voiceIdentifier,
+      onDone: () => {
+        setIsPlaying(false);
+      },
+      onStopped: () => {
+        setIsPlaying(false);
+      },
+      onError: (error) => {
+        console.error('Speech error:', error);
+        setIsPlaying(false);
+        Alert.alert('Speech Error', 'There was an error playing the audio. Please try again.');
+      },
+    });
+    
+    setIsPlaying(true);
   };
 
   const handlePause = () => {
-    if (Platform.OS !== 'web') {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    }
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     Speech.pause();
-    setIsPaused(true);
-    setIsSpeaking(false);
-    console.log('Paused speaking');
+    setIsPlaying(false);
   };
 
   const stopSpeaking = () => {
     Speech.stop();
-    setIsSpeaking(false);
-    setIsPaused(false);
-    console.log('Stopped speaking');
+    setIsPlaying(false);
   };
 
   const handleStop = () => {
-    if (Platform.OS !== 'web') {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    }
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     stopSpeaking();
   };
 
   const handleBack = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    stopSpeaking();
     if (selectedSection) {
       setSelectedSection(null);
-      stopSpeaking();
     } else if (selectedCategory) {
       setSelectedCategory(null);
-    } else {
-      router.back();
     }
   };
 
-  const getSelectedCategorySections = (): LegislationSection[] => {
-    const category = categories.find(cat => cat.name === selectedCategory);
-    return category ? category.sections : [];
+  const getSelectedCategorySections = () => {
+    const category = categories.find(c => c.name === selectedCategory);
+    return category?.sections || [];
   };
 
   return (
-    <>
+    <View style={styles.container}>
       <Stack.Screen
         options={{
           title: 'Listen to Legislation',
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={handleBack}
-              style={styles.headerButton}
-            >
-              <IconSymbol name="chevron.left" size={24} color={colors.primary} />
-            </TouchableOpacity>
-          ),
+          headerStyle: {
+            backgroundColor: colors.background,
+          },
+          headerTintColor: colors.text,
+          headerShadowVisible: false,
         }}
       />
-      <View style={commonStyles.container}>
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-        >
-          {/* Info Card */}
-          <View style={[commonStyles.card, styles.infoCard]}>
-            <View style={styles.infoHeader}>
-              <IconSymbol name="speaker.wave.2.fill" size={32} color={colors.primary} />
-              <Text style={styles.infoTitle}>Audio Legislation Player</Text>
-            </View>
-            <Text style={styles.infoText}>
-              Select any legislation section to listen to the full text read aloud with a soft, gentle female voice and natural pauses. 
-              Perfect for learning definitions while on the go!
+      
+      <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
+        {!selectedCategory && (
+          <>
+            <Text style={styles.title}>Listen to Legislation</Text>
+            <Text style={styles.subtitle}>
+              Select a category to hear the legislation read aloud with natural pronunciation
             </Text>
-          </View>
 
-          {/* Category Selection */}
-          {!selectedCategory && (
-            <View style={styles.categorySection}>
-              <Text style={styles.sectionTitle}>Select Legislation</Text>
-              {categories.map((category, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.categoryCard}
-                  onPress={() => handleCategorySelect(category.name)}
-                >
-                  <View style={styles.categoryContent}>
-                    <IconSymbol
-                      name="book.fill"
-                      size={24}
-                      color={colors.primary}
-                      style={styles.categoryIcon}
-                    />
-                    <View style={styles.categoryTextContainer}>
-                      <Text style={styles.categoryName}>{category.name}</Text>
-                      <Text style={styles.categorySectionCount}>
-                        {category.sections.length} section{category.sections.length !== 1 ? 's' : ''}
-                      </Text>
-                    </View>
-                    <IconSymbol
-                      name="chevron.right"
-                      size={20}
-                      color={colors.textSecondary}
-                    />
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
+            {categories.map((category) => (
+              <TouchableOpacity
+                key={category.name}
+                style={styles.categoryCard}
+                onPress={() => handleCategorySelect(category.name)}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.categoryTitle}>{category.name}</Text>
+                <Text style={styles.categorySubtitle}>
+                  {category.sections.length} section{category.sections.length !== 1 ? 's' : ''}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </>
+        )}
 
-          {/* Section Selection */}
-          {selectedCategory && !selectedSection && (
-            <View style={styles.sectionListContainer}>
-              <Text style={styles.sectionTitle}>{selectedCategory}</Text>
-              <Text style={styles.sectionSubtitle}>
-                Select a section to listen to
-              </Text>
-              {getSelectedCategorySections().map((section, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.sectionCard}
-                  onPress={() => handleSectionSelect(section)}
-                >
-                  <View style={styles.sectionContent}>
-                    <View style={styles.sectionNumberBadge}>
-                      <Text style={styles.sectionNumberText}>{index + 1}</Text>
-                    </View>
-                    <View style={styles.sectionTextContainer}>
-                      <Text style={styles.sectionName}>{section.title}</Text>
-                      <Text style={styles.sectionPreview} numberOfLines={2}>
-                        {section.content}
-                      </Text>
-                    </View>
-                    <IconSymbol
-                      name="play.circle.fill"
-                      size={28}
-                      color={colors.primary}
-                    />
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
+        {selectedCategory && !selectedSection && (
+          <>
+            <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+              <IconSymbol name="chevron.left" size={20} color={colors.text} />
+              <Text style={styles.backButtonText}>Back to Categories</Text>
+            </TouchableOpacity>
 
-          {/* Audio Player */}
-          {selectedSection && (
-            <View style={styles.playerContainer}>
-              <View style={[commonStyles.card, styles.playerCard]}>
-                <View style={styles.playerHeader}>
-                  <IconSymbol
-                    name="waveform"
-                    size={40}
-                    color={colors.primary}
-                    style={styles.playerIcon}
-                  />
-                  <Text style={styles.playerTitle}>Now Playing</Text>
-                </View>
+            <Text style={styles.title}>{selectedCategory}</Text>
+            <Text style={styles.subtitle}>Select a section to listen to</Text>
 
-                <View style={styles.playerContent}>
-                  <Text style={styles.playerSectionTitle}>
-                    {selectedSection.title}
-                  </Text>
-                  <ScrollView style={styles.playerTextScroll}>
-                    <Text style={styles.playerText}>
-                      {selectedSection.content}
-                    </Text>
-                  </ScrollView>
-                </View>
+            {getSelectedCategorySections().map((section, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.sectionButton}
+                onPress={() => handleSectionSelect(section)}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.sectionTitle}>{section.title}</Text>
+              </TouchableOpacity>
+            ))}
+          </>
+        )}
 
-                {/* Speech Info Banner */}
-                <View style={styles.speechInfoBanner}>
-                  <IconSymbol
-                    name="info.circle.fill"
-                    size={16}
-                    color={colors.primary}
-                    style={styles.speechInfoIcon}
-                  />
-                  <Text style={styles.speechInfoText}>
-                    Soft, gentle female voice with natural pauses for better listening
-                  </Text>
-                </View>
+        {selectedSection && (
+          <>
+            <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+              <IconSymbol name="chevron.left" size={20} color={colors.text} />
+              <Text style={styles.backButtonText}>Back to Sections</Text>
+            </TouchableOpacity>
 
-                {/* Playback Controls */}
-                <View style={styles.controlsContainer}>
-                  {!isSpeaking && !isPaused && (
+            <View style={styles.selectedSection}>
+              <Text style={styles.selectedSectionTitle}>{selectedSection.title}</Text>
+              <Text style={styles.selectedSectionContent}>{selectedSection.content}</Text>
+
+              <View style={styles.voiceSelectionContainer}>
+                <Text style={styles.voiceSelectionTitle}>Choose Voice:</Text>
+                <View style={styles.voiceOptionsContainer}>
+                  {voiceOptions.map((voice) => (
                     <TouchableOpacity
-                      style={[buttonStyles.primaryButton, styles.controlButton]}
-                      onPress={handlePlay}
+                      key={voice.id}
+                      style={[
+                        styles.voiceOption,
+                        selectedVoiceOption === voice.id && styles.voiceOptionSelected,
+                      ]}
+                      onPress={() => handleVoiceSelect(voice.id)}
+                      activeOpacity={0.7}
                     >
-                      <IconSymbol
-                        name="play.fill"
-                        size={24}
-                        color="#FFFFFF"
-                        style={styles.controlIcon}
-                      />
-                      <Text style={buttonStyles.buttonText}>Play</Text>
+                      <View style={styles.voiceOptionIcon}>
+                        <IconSymbol 
+                          name={voice.icon as any} 
+                          size={24} 
+                          color={selectedVoiceOption === voice.id ? colors.primary : colors.textSecondary} 
+                        />
+                      </View>
+                      <Text style={styles.voiceOptionName}>{voice.name}</Text>
+                      <Text style={styles.voiceOptionDescription}>{voice.description}</Text>
                     </TouchableOpacity>
-                  )}
-
-                  {isSpeaking && (
-                    <TouchableOpacity
-                      style={[buttonStyles.accentButton, styles.controlButton]}
-                      onPress={handlePause}
-                    >
-                      <IconSymbol
-                        name="pause.fill"
-                        size={24}
-                        color="#FFFFFF"
-                        style={styles.controlIcon}
-                      />
-                      <Text style={buttonStyles.buttonText}>Pause</Text>
-                    </TouchableOpacity>
-                  )}
-
-                  {isPaused && (
-                    <TouchableOpacity
-                      style={[buttonStyles.primaryButton, styles.controlButton]}
-                      onPress={handlePlay}
-                    >
-                      <IconSymbol
-                        name="play.fill"
-                        size={24}
-                        color="#FFFFFF"
-                        style={styles.controlIcon}
-                      />
-                      <Text style={buttonStyles.buttonText}>Resume</Text>
-                    </TouchableOpacity>
-                  )}
-
-                  {(isSpeaking || isPaused) && (
-                    <TouchableOpacity
-                      style={[styles.stopButton]}
-                      onPress={handleStop}
-                    >
-                      <IconSymbol
-                        name="stop.fill"
-                        size={24}
-                        color={colors.error}
-                        style={styles.controlIcon}
-                      />
-                      <Text style={styles.stopButtonText}>Stop</Text>
-                    </TouchableOpacity>
-                  )}
-                </View>
-
-                {/* Status Indicator */}
-                {(isSpeaking || isPaused) && (
-                  <View style={styles.statusContainer}>
-                    <View style={[
-                      styles.statusIndicator,
-                      isSpeaking && styles.statusIndicatorActive
-                    ]} />
-                    <Text style={styles.statusText}>
-                      {isSpeaking ? 'Playing...' : 'Paused'}
-                    </Text>
-                  </View>
-                )}
-              </View>
-
-              {/* Keywords Card */}
-              <View style={[commonStyles.card, styles.keywordsCard]}>
-                <Text style={styles.keywordsTitle}>Key Terms</Text>
-                <View style={styles.keywordsContainer}>
-                  {selectedSection.keywords.slice(0, 12).map((keyword, index) => (
-                    <View key={index} style={styles.keywordBadge}>
-                      <Text style={styles.keywordText}>{keyword}</Text>
-                    </View>
                   ))}
                 </View>
               </View>
+
+              <View style={styles.controlsContainer}>
+                {!isPlaying ? (
+                  <TouchableOpacity
+                    style={styles.controlButton}
+                    onPress={handlePlay}
+                    activeOpacity={0.7}
+                  >
+                    <IconSymbol name="play.fill" size={20} color="#FFFFFF" />
+                    <Text style={styles.controlButtonText}>Play</Text>
+                  </TouchableOpacity>
+                ) : (
+                  <>
+                    <TouchableOpacity
+                      style={[styles.controlButton, styles.controlButtonSecondary]}
+                      onPress={handlePause}
+                      activeOpacity={0.7}
+                    >
+                      <IconSymbol name="pause.fill" size={20} color={colors.text} />
+                      <Text style={[styles.controlButtonText, styles.controlButtonTextSecondary]}>
+                        Pause
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[styles.controlButton, styles.controlButtonSecondary]}
+                      onPress={handleStop}
+                      activeOpacity={0.7}
+                    >
+                      <IconSymbol name="stop.fill" size={20} color={colors.text} />
+                      <Text style={[styles.controlButtonText, styles.controlButtonTextSecondary]}>
+                        Stop
+                      </Text>
+                    </TouchableOpacity>
+                  </>
+                )}
+              </View>
             </View>
-          )}
-        </ScrollView>
-      </View>
-    </>
+          </>
+        )}
+      </ScrollView>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: 16,
-    paddingBottom: Platform.OS === 'ios' ? 40 : 100,
-  },
-  headerButton: {
-    padding: 8,
-    marginLeft: 8,
-  },
-  infoCard: {
-    marginBottom: 24,
-  },
-  infoHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  infoTitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: colors.text,
-    marginLeft: 12,
-  },
-  infoText: {
-    fontSize: 15,
-    lineHeight: 22,
-    color: colors.textSecondary,
-  },
-  categorySection: {
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 16,
-  },
-  sectionSubtitle: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    marginBottom: 16,
-  },
-  categoryCard: {
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-    elevation: 3,
-  },
-  categoryContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  categoryIcon: {
-    marginRight: 12,
-  },
-  categoryTextContainer: {
-    flex: 1,
-  },
-  categoryName: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: colors.text,
-    marginBottom: 4,
-  },
-  categorySectionCount: {
-    fontSize: 14,
-    color: colors.textSecondary,
-  },
-  sectionListContainer: {
-    marginBottom: 16,
-  },
-  sectionCard: {
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-    elevation: 3,
-  },
-  sectionContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  sectionNumberBadge: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: colors.highlight,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  sectionNumberText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.primary,
-  },
-  sectionTextContainer: {
-    flex: 1,
-    marginRight: 12,
-  },
-  sectionName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text,
-    marginBottom: 4,
-  },
-  sectionPreview: {
-    fontSize: 13,
-    color: colors.textSecondary,
-    lineHeight: 18,
-  },
-  playerContainer: {
-    marginBottom: 16,
-  },
-  playerCard: {
-    marginBottom: 16,
-  },
-  playerHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.highlight,
-  },
-  playerIcon: {
-    marginRight: 12,
-  },
-  playerTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: colors.text,
-  },
-  playerContent: {
-    marginBottom: 16,
-  },
-  playerSectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.primary,
-    marginBottom: 12,
-  },
-  playerTextScroll: {
-    maxHeight: 200,
-  },
-  playerText: {
-    fontSize: 16,
-    lineHeight: 26,
-    color: colors.text,
-  },
-  speechInfoBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.highlight,
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 16,
-  },
-  speechInfoIcon: {
-    marginRight: 8,
-  },
-  speechInfoText: {
-    fontSize: 13,
-    color: colors.primary,
-    fontWeight: '500',
-    flex: 1,
-  },
-  controlsContainer: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 16,
-  },
-  controlButton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  controlIcon: {
-    marginRight: 8,
-  },
-  stopButton: {
-    flex: 1,
-    backgroundColor: colors.card,
-    borderWidth: 2,
-    borderColor: colors.error,
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  stopButtonText: {
-    color: colors.error,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  statusContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: colors.highlight,
-  },
-  statusIndicator: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: colors.textSecondary,
-    marginRight: 8,
-  },
-  statusIndicatorActive: {
-    backgroundColor: colors.success,
-  },
-  statusText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.text,
-  },
-  keywordsCard: {
-    marginBottom: 16,
-  },
-  keywordsTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.text,
-    marginBottom: 12,
-  },
-  keywordsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  keywordBadge: {
-    backgroundColor: colors.highlight,
-    borderRadius: 16,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-  },
-  keywordText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: colors.primary,
-  },
-});
